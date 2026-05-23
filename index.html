@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Faro Estoico</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@500;700&family=Inter:wght@300;400;500;600&display=swap"
+        rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        html {
+            scroll-behavior: smooth;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f5f1ea;
+            color: #1d1d1d;
+            line-height: 1.7;
+        }
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+        img {
+            max-width: 100%;
+        }
+        .container {
+            width: 90%;
+            max-width: 1100px;
+            margin: auto;
+        }
+
+        /* HEADER */
+        header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(245, 241, 234, 0.95);
+            backdrop-filter: blur(8px);
+            border-bottom: 1px solid #ddd;
+            z-index: 1000;
+        }
+        .nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 18px 0;
+        }
+        .logo-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+        .logo-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: #0f2740;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+            font-weight: 600;
+            box-shadow: 0 4px 12px rgba(15, 39, 64, 0.15);
+        }
+        .logo {
+            font-family: 'EB Garamond', serif;
+            font-size: 1.8rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            color: #111;
+        }
+        .menu {
+            display: flex;
+            gap: 28px;
+        }
+        .menu a {
+            font-size: 0.95rem;
+            color: #333;
+            transition: 0.3s;
+        }
+        .menu a:hover {
+            color: #0f2740;
+        }
+
+        /* HERO */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            padding-top: 120px;
+        }
+        .hero-content {
+            max-width: 760px;
+        }
+        .hero h1 {
+            font-family: 'EB Garamond', serif;
+            font-size: 5rem;
+            line-height: 1;
+            margin-bottom: 25px;
+            color: #111;
+        }
+        .hero p {
+            font-size: 1.2rem;
+            max-width: 650px;
+            margin-bottom: 40px;
+            color: #444;
+        }
+        .buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+        .btn {
+            padding: 14px 24px;
+            border-radius: 999px;
+            border: 1px solid #0f2740;
+            transition: 0.3s;
+            font-size: 0.95rem;
+        }
+        .btn-primary {
+            background: #0f2740;
+            color: white;
+        }
+        .btn-primary:hover {
+            background: #163a5f;
+        }
+        .btn-secondary:hover {
+            background: #0f2740;
+            color: white;
+        }
+
+        /* SECTIONS */
+        section {
+            padding: 110px 0;
+            border-top: 1px solid #ddd;
+        }
+        .section-title {
+            font-family: 'EB Garamond', serif;
+            font-size: 3rem;
+            margin-bottom: 25px;
+            color: #111;
+        }
+        .section-text {
+            max-width: 750px;
+            color: #444;
+            font-size: 1.05rem;
+        }
+
+        /* CARDS */
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 24px;
+            margin-top: 50px;
+        }
+        .card {
+            background: white;
+            padding: 30px;
+            border-radius: 18px;
+            border: 1px solid #ddd;
+            transition: 0.3s;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+        }
+        .card h3 {
+            font-family: 'EB Garamond', serif;
+            font-size: 1.6rem;
+            margin-bottom: 15px;
+        }
+        .card p {
+            color: #555;
+            margin-bottom: 20px;
+        }
+        .card a {
+            color: #0f2740;
+            font-weight: 600;
+        }
+
+        /* COMMUNITY */
+        .community-box {
+            background: #0f2740;
+            color: white;
+            padding: 60px;
+            border-radius: 24px;
+            margin-top: 40px;
+        }
+        .community-box p {
+            margin: 20px 0 30px;
+            color: #e4e4e4;
+        }
+
+        /* FOOTER */
+        footer {
+            padding: 60px 0;
+            border-top: 1px solid #ddd;
+        }
+        .footer-content {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            color: #555;
+        }
+
+        /* WHATSAPP FLOAT */
+        .whatsapp-float {
+            position: fixed;
+            right: 20px;
+            bottom: 20px;
+            width: 62px;
+            height: 62px;
+            background: #25D366;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-size: 1.8rem;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+            z-index: 999;
+            transition: 0.3s;
+        }
+        .whatsapp-float:hover {
+            transform: scale(1.08);
+        }
+
+        /* RESPONSIVE */
+        @media(max-width: 768px) {
+            .hero h1 {
+                font-size: 3.5rem;
+            }
+            .section-title {
+                font-size: 2.4rem;
+            }
+            .menu {
+                gap: 16px;
+                font-size: 0.9rem;
+            }
+            .community-box {
+                padding: 40px 30px;
+            }
+        }
+        @media(max-width: 600px) {
+            .nav {
+                flex-direction: column;
+                gap: 16px;
+            }
+            .menu {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            .hero {
+                text-align: center;
+            }
+            .buttons {
+                justify-content: center;
+            }
+            .logo-wrapper {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- HEADER -->
+    <header>
+        <div class="container nav">
+            <div class="logo-wrapper">
+                <div class="logo-icon">
+                    ☼
+                </div>
+                <div class="logo">
+                    FARO ESTOICO
+                </div>
+            </div>
+            <nav class="menu">
+                <a href="#inicio">Inicio</a>
+                <a href="#bitacora">Bitácora</a>
+                <a href="#biblioteca">Biblioteca</a>
+                <a href="#comunidad">Comunidad</a>
+                <a href="#contacto">Contacto</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- HERO -->
+    <section class="hero" id="inicio">
+        <div class="container">
+            <div class="hero-content">
+                <h1>Estoicismo práctico para pensar con claridad.</h1>
+                <p>
+                    Comunidad estoica contemporánea.
+                    Biblioteca, reflexión, lectura y cursos personalizados.
+                </p>
+                <div class="buttons">
+                    <a href="https://chat.whatsapp.com/H4cfFd4T6HF8GLBGlWYW4z"
+                        class="btn btn-primary"
+                        target="_blank">
+                        Comunidad de WhatsApp
+                    </a>
+                    <a href="https://drive.google.com/drive/folders/1XSwUkqGMGzQx8gkaWOmaWJMTU0fd0u4c"
+                        class="btn btn-secondary"
+                        target="_blank">
+                        Biblioteca
+                    </a>
+                    <a href="https://open.spotify.com/show/6vqZwZgnO12WOCNQU6kpkC?si=62cdeba56fe34c6a"
+                        class="btn btn-secondary"
+                        target="_blank">
+                        Spotify
+                    </a>
+                    <a href="https://www.instagram.com/firme_enlatormenta?utm_source=qr&igsh=N2U0NTNqYTRvZHB6"
+                        class="btn btn-secondary"
+                        target="_blank">
+                        Instagram
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SOBRE -->
+    <section>
+        <div class="container">
+            <h2 class="section-title">
+                Sobre Faro Estoico
+            </h2>
+            <p class="section-text">
+                Faro Estoico es un espacio de reflexión.
+                Un lugar para pensar, leer, conversar y desarrollar pensamiento crítico.
+                Una comunidad moderna orientada a la práctica y la claridad.
+            </p>
+        </div>
+    </section>
+
+    <!-- CURSOS -->
+    <section>
+        <div class="container">
+            <h2 class="section-title">
+                Cursos personalizados
+            </h2>
+            <p class="section-text">
+                Cursos y acompañamiento estoico individual o grupal.
+                Procesos personalizados de lectura, reflexión y estudio.
+            </p>
+            <div class="buttons" style="margin-top:40px;">
+                <a href="https://chat.whatsapp.com/H4cfFd4T6HF8GLBGlWYW4z"
+                    class="btn btn-primary"
+                    target="_blank">
+                    Consultar por WhatsApp
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- BITACORA -->
+    <section id="bitacora">
+        <div class="container">
+            <h2 class="section-title">
+                Bitácora
+            </h2>
+            <p class="section-text">
+                Reflexiones, lecturas y pensamiento estoico contemporáneo.
+            </p>
+            <div class="cards">
+                <div class="card">
+                    <h3>El silencio y la claridad</h3>
+                    <p>
+                        Una reflexión sobre el exceso de estímulos y la necesidad del pensamiento lento.
+                    </p>
+                    <a href="#">
+                        Leer →
+                    </a>
+                </div>
+                <div class="card">
+                    <h3>La práctica estoica hoy</h3>
+                    <p>
+                        Cómo aplicar principios estoicos clásicos en la vida cotidiana contemporánea.
+                    </p>
+                    <a href="#">
+                        Leer →
+                    </a>
+                </div>
+                <div class="card">
+                    <h3>Comunidad y filosofía</h3>
+                    <p>
+                        Pensar juntos como una forma de construir criterio y conversación.
+                    </p>
+                    <a href="#">
+                        Leer →
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- BIBLIOTECA -->
+    <section id="biblioteca">
+        <div class="container">
+            <h2 class="section-title">
+                Biblioteca virtual gratuita
+            </h2>
+            <p class="section-text">
+                Biblioteca abierta de pensamiento crítico.
+                Textos, lecturas y materiales compartidos libremente.
+            </p>
+            <div class="buttons" style="margin-top:40px;">
+                <a href="https://drive.google.com/drive/folders/1XSwUkqGMGzQx8gkaWOmaWJMTU0fd0u4c"
+                    class="btn btn-primary"
+                    target="_blank">
+                    Entrar a la biblioteca
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- COMUNIDAD -->
+    <section id="comunidad">
+        <div class="container">
+            <div class="community-box">
+                <h2 class="section-title" style="color:white;">
+                    Comunidad estoica
+                </h2>
+                <p>
+                    Sumate a la comunidad de Faro Estoico.
+                    Espacios de conversación, estudio y reflexión compartida.
+                </p>
+                <div class="buttons">
+                    <a href="https://chat.whatsapp.com/H4cfFd4T6HF8GLBGlWYW4z"
+                        class="btn btn-primary"
+                        style="border-color:white; color:white;"
+                        target="_blank">
+                        WhatsApp
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer id="contacto">
+        <div class="container footer-content">
+            <div>FARO ESTOICO</div>
+            <div>gabrielrios1882@gmail.com</div>
+
+            <div>
+                <a href="https://www.instagram.com/firme_enlatormenta?utm_source=qr&igsh=N2U0NTNqYTRvZHB6" target="_blank">
+                Instagram
+                </a>
+    ·
+                <a href="https://open.spotify.com/show/6vqZwZgnO12WOCNQU6kpkC?si=62cdeba56fe34c6a" target="_blank">
+                Spotify
+                </a>
+    ·
+                <a href="https://open.spotify.com/show/6p2aXCSrcYxpr9NpBl9ivT?si=ba076a311d624e2d" target="_blank">
+                Santiago Z.
+                </a>
+            </div>
+            <div>Montevideo, Uruguay</div>
+        </div>
+    </footer>
+
+   <!-- WHATSAPP FLOAT -->
+    <a href="https://chat.whatsapp.com/H4cfFd4T6HF8GLBGlWYW4z"
+        class="whatsapp-float"
+        target="_blank"
+        aria-label="WhatsApp">
+
+        <svg xmlns="http://www.w3.org/2000/svg"
+            width="30"
+            height="30"
+            fill="currentColor"
+            viewBox="0 0 24 24">
+
+            <path d="M20.52 3.48A11.82 11.82 0 0012.06 0C5.5 0 .15 5.34.15 11.92c0 2.1.55 4.15 1.6 5.96L0 24l6.3-1.65a11.9 11.9 0 005.76 1.47h.01c6.56 0 11.91-5.35 11.91-11.92 0-3.18-1.24-6.17-3.46-8.42zm-8.46 18.3h-.01a9.9 9.9 0 01-5.05-1.39l-.36-.21-3.74.98 1-3.65-.24-.37a9.87 9.87 0 01-1.52-5.24c0-5.47 4.45-9.92 9.93-9.92 2.65 0 5.13 1.03 7 2.9a9.84 9.84 0 012.9 7c0 5.47-4.45 9.92-9.91 9.92zm5.44-7.44c-.3-.15-1.77-.88-2.04-.98-.27-.1-.47-.15-.67.15-.2.3-.77.98-.95 1.18-.17.2-.35.22-.65.08-.3-.15-1.25-.46-2.38-1.47-.88-.79-1.48-1.76-1.65-2.06-.17-.3-.02-.46.13-.6.13-.13.3-.35.45-.52.15-.18.2-.3.3-.5.1-.2.05-.37-.03-.52-.08-.15-.67-1.62-.92-2.22-.24-.58-.48-.5-.67-.51h-.57c-.2 0-.52.08-.8.37-.27.3-1.05 1.03-1.05 2.5 0 1.47 1.08 2.9 1.23 3.1.15.2 2.13 3.25 5.16 4.55.72.3 1.28.48 1.72.62.72.23 1.38.2 1.9.12.58-.08 1.77-.72 2.02-1.42.25-.7.25-1.3.17-1.42-.07-.12-.27-.2-.57-.35z" />
+
+        </svg>
+    </a>
+</body>
+</html>
