@@ -149,9 +149,9 @@
     const contentForm = document.getElementById('contentForm');
     const btnLogout = document.getElementById('btnLogout');
     const listaBitacoras = document.getElementById('listaBitacoras');
-
-    // Comprobar el estado de la sesión al cargar la página
+// Comprobar el estado de la sesión al cargar la página
     supabase.auth.onAuthStateChange((event, session) => {
+        console.log("Evento de Autenticación:", event); // Para ver qué pasa en la consola
         if (session) {
             authSection.classList.add('hidden');
             dashboardSection.classList.remove('hidden');
@@ -165,15 +165,18 @@
     // Manejar el Inicio de Sesión
     loginForm.addEventListener('submit', async (e) => {
         e.preventDefault();
-        const email = document.getElementById('email').value;
+        const email = document.getElementById('email').value.trim();
         const password = document.getElementById('password').value;
 
-        const { error } = await supabase.auth.signInWithPassword({ email, password });
+        const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+        
         if (error) {
-            alert("Error de autenticación: " + error.message);
+            // AQUÍ TE DIRÁ EXACTAMENTE POR QUÉ NO ENTRA
+            alert("Error al iniciar sesión: " + error.message);
+        } else if (data.user) {
+            alert("¡Sesión iniciada con éxito!");
         }
     });
-
     // Manejar Cierre de Sesión
     btnLogout.addEventListener('click', async () => {
         await supabase.auth.signOut();
