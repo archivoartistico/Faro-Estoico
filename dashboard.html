@@ -122,32 +122,14 @@
         .btn-delete { background: var(--danger); color: white; padding: 6px 12px; width: auto; font-size: 0.85rem; margin: 0; }
         
         .cancel-edit { background: #95a5a6; color: white; margin-top: 5px; }
-
-        /* FOOTER DE ENTRADA SECRETA */
-        footer {
-            margin-top: auto;
-            text-align: center;
-            padding: 20px 0;
-        }
-        .secret-link {
-            color: #bbb;
-            font-size: 0.75rem;
-            letter-spacing: 1px;
-            text-decoration: none;
-            cursor: pointer;
-            transition: color 0.3s;
-        }
-        .secret-link:hover {
-            color: #888;
-        }
     </style>
 </head>
 <body>
 
 <div class="container">
 
-    <div id="esperaSection" style="text-align: center; padding: 40px 0;">
-        <p style="color: #888; font-style: italic; font-size: 1.1rem;">"La tranquilidad viene cuando dejas de preocuparte por lo que dicen, hacen o piensan los demás."</p>
+    <div id="camuflajeSection" style="text-align: center; padding: 40px 0;">
+        <p style="color: #888; font-style: italic; font-size: 1.1rem;">"La verdadera felicidad es disfrutar el presente sin dependencia ansiosa del futuro."</p>
     </div>
 
     <div id="authSection" class="hidden">
@@ -218,18 +200,13 @@
     </div>
 </div>
 
-<footer>
-    <span class="secret-link" onclick="revelarLogin()">Gestión</span>
-</footer>
-
 <script>
     const supabaseUrl = 'https://fdblmxeobrgzopcnjipf.supabase.co'; 
     const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZkYmxteGVvYnJnem9wY25qaXBmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk4NzM3NjEsImV4cCI6MjA5NTQ0OTc2MX0.2S_LO9ppd4QjYYChRvKxH9i8w1XRUARhEiWOJC-z6AU'; 
     
     const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
 
-    // Elementos del DOM
-    const esperaSection = document.getElementById('esperaSection');
+    const camuflajeSection = document.getElementById('camuflajeSection');
     const authSection = document.getElementById('authSection');
     const dashboardSection = document.getElementById('dashboardSection');
     const loginForm = document.getElementById('loginForm');
@@ -240,44 +217,48 @@
 
     let bitacorasLocales = [];
 
-    // Función para activar la "puerta trasera"
-    function revelarLogin() {
-        // Solo actúa si no estás logueado ya
-        if (dashboardSection.classList.contains('hidden')) {
-            esperaSection.classList.add('hidden');
-            authSection.classList.remove('hidden');
-        }
-    }
+    // COMPROBAR PUERTA TRASERA AL CARGAR
+    const urlParams = new URLSearchParams(window.location.search);
+    const tieneAccesoSecreto = urlParams.get('acceso') === 'secreto';
 
-    // Comprobar estado de sesión
+    // Comprobar estado de sesión en Supabase
     supabase.auth.onAuthStateChange((event, session) => {
         if (session) {
-            esperaSection.classList.add('hidden');
+            camuflajeSection.classList.add('hidden');
             authSection.classList.add('hidden');
             dashboardSection.classList.remove('hidden');
             cargarBitacorasGestion();
             cargarFraseActualDashboard();
         } else {
-            // Regresa al modo oculto/espera al cerrar sesión
-            esperaSection.classList.remove('hidden');
-            authSection.classList.add('hidden');
+            // Si no está logueado, evaluamos si viene desde el enlace oculto del footer
+            if (tieneAccesoSecreto) {
+                camuflajeSection.classList.add('hidden');
+                authSection.classList.remove('hidden');
+            } else {
+                camuflajeSection.classList.remove('hidden');
+                authSection.classList.add('hidden');
+            }
             dashboardSection.classList.add('hidden');
         }
     });
 
-    // Manejar el Inicio de Sesión
+    // Iniciar Sesión
     loginForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         const email = document.getElementById('email').value.trim();
         const password = document.getElementById('password').value;
         const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-        if (error) alert("Error al iniciar sesión: " + error.message);
+        if (error) alert("Error de credenciales: " + error.message);
     });
 
     // Cerrar Sesión
-    btnLogout.addEventListener('click', async () => { await supabase.auth.signOut(); });
+    btnLogout.addEventListener('click', async () => { 
+        await supabase.auth.signOut(); 
+        // Al cerrar sesión, limpiamos la URL para volver al camuflaje completo
+        window.location.href = 'dashboard.html';
+    });
 
-    // CAMBIO ENTRE PESTAÑAS
+    // PESTAÑAS
     function cambiarPestaña(pestaña) {
         document.querySelectorAll('.tab-pane').forEach(p => p.classList.add('hidden'));
         document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
@@ -288,7 +269,7 @@
         if (pestaña === 'editar') cargarBitacorasGestion();
     }
 
-    // --- ACCIONES BITÁCORA (CREAR / EDITAR) ---
+    // --- LOGICA DE BITÁCORAS ---
     contentForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         const idEdit = document.getElementById('edit-id').value;
@@ -298,34 +279,27 @@
 
         if (idEdit) {
             const { error } = await supabase.from('bitacoras').update({ titulo, descripcion, contenido }).eq('id', idEdit);
-            if (error) {
-                alert("Error al editar: " + error.message);
-            } else {
-                alert("¡Bitácora modificada con éxito!");
+            if (error) alert("Error al editar: " + error.message);
+            else {
+                alert("¡Modificado correctamente!");
                 limpiarFormularioEdicion();
                 cambiarPestaña('editar');
             }
         } else {
             const { error } = await supabase.from('bitacoras').insert([{ titulo, descripcion, contenido }]);
-            if (error) {
-                alert("Error al guardar: " + error.message);
-            } else {
-                alert("¡Bitácora publicada con éxito!");
+            if (error) alert("Error al guardar: " + error.message);
+            else {
+                alert("¡Publicado con éxito!");
                 contentForm.reset();
             }
         }
         cargarBitacorasGestion();
     });
 
-    // Cargar Lista en Pestaña de Gestión
     async function cargarBitacorasGestion() {
         const { data, error } = await supabase.from('bitacoras').select('*').order('id', { ascending: false });
-        if (error) {
-            listaGestion.innerHTML = 'Error al cargar las bitácoras.';
-            return;
-        }
-        if (!data || data.length === 0) {
-            listaGestion.innerHTML = '<em>No hay bitácoras creadas aún.</em>';
+        if (error || !data || data.length === 0) {
+            listaGestion.innerHTML = '<em>No hay bitácoras disponibles para editar.</em>';
             return;
         }
         bitacorasLocales = data;
@@ -372,17 +346,14 @@
     }
 
     async function eliminarBitacora(id) {
-        if(confirm("¿Estás completamente seguro de borrar esta bitácora?")) {
+        if(confirm("¿Seguro que quieres eliminar de forma definitiva esta bitácora?")) {
             const { error } = await supabase.from('bitacoras').delete().eq('id', id);
-            if (error) alert("Error al eliminar: " + error.message);
-            else {
-                alert("Eliminado con éxito.");
-                cargarBitacorasGestion();
-            }
+            if (error) alert(error.message);
+            else cargarBitacorasGestion();
         }
     }
 
-    // --- ACCIONES DE LA FRASE DEL DÍA ---
+    // --- LOGICA DE LA FRASE ---
     async function cargarFraseActualDashboard() {
         const { data, error } = await supabase.from('frases_dia').select('*').eq('id', 1).single();
         if(!error && data) {
@@ -395,13 +366,9 @@
         e.preventDefault();
         const texto = document.getElementById('fraseTexto').value;
         const autor = document.getElementById('fraseAutor').value;
-
         const { error } = await supabase.from('frases_dia').upsert({ id: 1, texto, autor });
-        if(error) {
-            alert("Error al actualizar la frase: " + error.message);
-        } else {
-            alert("¡Frase del día guardada correctamente!");
-        }
+        if(error) alert(error.message);
+        else alert("¡Frase del día guardada correctamente!");
     });
 </script>
 </body>
