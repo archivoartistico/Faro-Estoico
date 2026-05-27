@@ -1,5 +1,10 @@
 [
   {
+  "titulo": "ESCRIBE_AQUÍ_EL_TÍTULO",
+  "descripcion": "ESCRIBE_AQUÍ_UN_RESUMEN_CORTO",
+  "contenido": "ESCRIBE_AQUÍ_TU_TEXTO_LARGO_COMPLETO"
+  },
+  {
     "titulo": "El silencio y la claridad",
     "descripcion": "Una reflexión sobre el exceso de estímulos y la necesidad del pensamiento lento.",
     "contenido": "Aquí va todo el texto completo y detallado sobre el silencio y la claridad. Puedes escribir varios párrafos si quieres. Al no saber programar, la persona solo debe preocuparse por redactar su texto aquí dentro, respetando las comillas."
