@@ -6,12 +6,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Faro Estoico</title>
 
-    <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@500;700&family=Inter:wght@300;400;500;600&display=swap"
-        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@500;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
     <style>
         * {
             margin: 0;
@@ -51,10 +49,9 @@
             z-index: 1000;
             transition: transform 0.3s ease;
         }
-
         header.hide {
-        transform: translateY(-100%);
-}       
+            transform: translateY(-100%);
+        }       
         .nav {
             display: flex;
             justify-content: space-between;
@@ -192,6 +189,7 @@
         .card a {
             color: #0f2740;
             font-weight: 600;
+            cursor: pointer;
         }
 
         /* COMMUNITY */
@@ -241,6 +239,71 @@
             transform: scale(1.08);
         }
 
+        /* VENTANA MODAL (CUADRADO DE LECTURA FLOTANTE) */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(15, 39, 64, 0.6);
+            backdrop-filter: blur(5px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+        .modal-box {
+            background: #f5f1ea;
+            padding: 40px;
+            border-radius: 24px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            border: 1px solid #ddd;
+            position: relative;
+            transform: translateY(20px);
+            transition: transform 0.3s ease;
+        }
+        .modal-overlay.active .modal-box {
+            transform: translateY(0);
+        }
+        .modal-box h2 {
+            font-family: 'EB Garamond', serif;
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            color: #111;
+            line-height: 1.2;
+        }
+        .modal-box p {
+            color: #333;
+            font-size: 1.1rem;
+            white-space: pre-line; /* Mantiene los saltos de línea */
+        }
+        .modal-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #666;
+            transition: 0.2s;
+        }
+        .modal-close:hover {
+            color: #0f2740;
+        }
+
         /* RESPONSIVE */
         @media(max-width: 768px) {
             .hero h1 {
@@ -278,18 +341,14 @@
         }
     </style>
 </head>
+
 <body>
 
-    <!-- HEADER -->
     <header>
         <div class="container nav">
             <div class="logo-wrapper">
-                <div class="logo-icon">
-                    ☼
-                </div>
-                <div class="logo">
-                    FARO ESTOICO
-                </div>
+                <div class="logo-icon">☼</div>
+                <div class="logo">FARO ESTOICO</div>
             </div>
             <nav class="menu">
                 <a href="#inicio">Inicio</a>
@@ -301,195 +360,162 @@
         </div>
     </header>
 
-    <!-- HERO -->
     <section class="hero" id="inicio">
         <div class="container">
             <div class="hero-content">
                 <h1>Estoicismo práctico para pensar con claridad.</h1>
-                <p>
-                    Comunidad estoica contemporánea.
-                    Biblioteca, reflexión, lectura y cursos personalizados.
-                </p>
+                <p>Comunidad estoica contemporánea. Biblioteca, reflexión, lectura y cursos personalizados.</p>
                 <div class="buttons">
-                    <a href="https://chat.whatsapp.com/H4cfFd4T6HF8GLBGlWYW4z"
-                        class="btn btn-primary"
-                        target="_blank">
-                        Comunidad de WhatsApp
-                    </a>
-                    <a href="https://drive.google.com/drive/folders/1XSwUkqGMGzQx8gkaWOmaWJMTU0fd0u4c"
-                        class="btn btn-secondary"
-                        target="_blank">
-                        Biblioteca
-                    </a>
-                    <a href="https://open.spotify.com/show/6vqZwZgnO12WOCNQU6kpkC?si=62cdeba56fe34c6a"
-                        class="btn btn-secondary"
-                        target="_blank">
-                        Spotify
-                    </a>
-                    <a href="https://www.instagram.com/firme_enlatormenta?utm_source=qr&igsh=N2U0NTNqYTRvZHB6"
-                        class="btn btn-secondary"
-                        target="_blank">
-                        Instagram
-                    </a>
+                    <a href="https://chat.whatsapp.com/H4cfFd4T6HF8GLBGlWYW4z" class="btn btn-primary" target="_blank">Comunidad de WhatsApp</a>
+                    <a href="https://drive.google.com/drive/folders/1XSwUkqGMGzQx8gkaWOmaWJMTU0fd0u4c" class="btn btn-secondary" target="_blank">Biblioteca</a>
+                    <a href="https://open.spotify.com/show/6vqZwZgnO12WOCNQU6kpkC?si=62cdeba56fe34c6a" class="btn btn-secondary" target="_blank">Spotify</a>
+                    <a href="https://www.instagram.com/firme_enlatormenta?utm_source=qr&igsh=N2U0NTNqYTRvZHB6" class="btn btn-secondary" target="_blank">Instagram</a>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- SOBRE -->
     <section>
         <div class="container">
-            <h2 class="section-title">
-                Sobre Faro Estoico
-            </h2>
-            <p class="section-text">
-                Faro Estoico es un espacio de reflexión.
-                Un lugar para pensar, leer, conversar y desarrollar pensamiento crítico.
-                Una comunidad moderna orientada a la práctica y la claridad.
-            </p>
+            <h2 class="section-title">Sobre Faro Estoico</h2>
+            <p class="section-text">Faro Estoico es un espacio de reflexión. Un lugar para pensar, leer, conversar y desarrollar pensamiento crítico. Una comunidad moderna orientada a la práctica y la claridad.</p>
         </div>
     </section>
 
-    <!-- CURSOS -->
     <section>
         <div class="container">
-            <h2 class="section-title">
-                Cursos personalizados
-            </h2>
-            <p class="section-text">
-                Cursos y acompañamiento estoico individual o grupal.
-                Procesos personalizados de lectura, reflexión y estudio.
-            </p>
+            <h2 class="section-title">Cursos personalizados</h2>
+            <p class="section-text">Cursos y acompañamiento estoico individual o grupal. Procesos personalizados de lectura, reflexión y estudio.</p>
             <div class="buttons" style="margin-top:40px;">
-                <a href="https://chat.whatsapp.com/H4cfFd4T6HF8GLBGlWYW4z"
-                    class="btn btn-primary"
-                    target="_blank">
-                    Consultar por WhatsApp
-                </a>
+                <a href="https://chat.whatsapp.com/H4cfFd4T6HF8GLBGlWYW4z" class="btn btn-primary" target="_blank">Consultar por WhatsApp</a>
             </div>
         </div>
     </section>
 
-    <!-- BITACORA -->
-<section id="bitacora">
-    <div class="container">
-        <h2 class="section-title">Bitácora</h2>
-        <p class="section-text">Reflexiones, lecturas y pensamiento estoico contemporáneo.</p>
-        
-        <div class="cards" id="contenedor-bitacoras"></div> 
-    </div>
-</section>
-    <!-- BIBLIOTECA -->
+    <section id="bitacora">
+        <div class="container">
+            <h2 class="section-title">Bitácora</h2>
+            <p class="section-text">Reflexiones, lecturas y pensamiento estoico contemporáneo.</p>
+            
+            <div class="cards" id="contenedor-bitacoras"></div> 
+        </div>
+    </section>
+
     <section id="biblioteca">
         <div class="container">
-            <h2 class="section-title">
-                Biblioteca virtual gratuita
-            </h2>
-            <p class="section-text">
-                Biblioteca abierta de pensamiento crítico.
-                Textos, lecturas y materiales compartidos libremente.
-            </p>
+            <h2 class="section-title">Biblioteca virtual gratuita</h2>
+            <p class="section-text">Biblioteca abierta de pensamiento crítico. Textos, lecturas y materiales compartidos libremente.</p>
             <div class="buttons" style="margin-top:40px;">
-                <a href="https://drive.google.com/drive/folders/1XSwUkqGMGzQx8gkaWOmaWJMTU0fd0u4c"
-                    class="btn btn-primary"
-                    target="_blank">
-                    Entrar a la biblioteca
-                </a>
+                <a href="https://drive.google.com/drive/folders/1XSwUkqGMGzQx8gkaWOmaWJMTU0fd0u4c" class="btn btn-primary" target="_blank">Entrar a la biblioteca</a>
             </div>
         </div>
     </section>
 
-    <!-- COMUNIDAD -->
     <section id="comunidad">
         <div class="container">
             <div class="community-box">
-                <h2 class="section-title" style="color:white;">
-                    Comunidad estoica
-                </h2>
-                <p>
-                    Sumate a la comunidad de Faro Estoico.
-                    Espacios de conversación, estudio y reflexión compartida.
-                </p>
+                <h2 class="section-title" style="color:white;">Comunidad estoica</h2>
+                <p>Sumate a la comunidad de Faro Estoico. Espacios de conversación, estudio y reflexión compartida.</p>
                 <div class="buttons">
-                    <a href="https://chat.whatsapp.com/H4cfFd4T6HF8GLBGlWYW4z"
-                        class="btn btn-primary"
-                        style="border-color:white; color:white;"
-                        target="_blank">
-                        WhatsApp
-                    </a>
+                    <a href="https://chat.whatsapp.com/H4cfFd4T6HF8GLBGlWYW4z" class="btn btn-primary" style="border-color:white; color:white;" target="_blank">WhatsApp</a>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- FOOTER -->
     <footer id="contacto">
         <div class="container footer-content">
             <div>FARO ESTOICO</div>
             <div>gabrielrios1882@gmail.com</div>
-
             <div>
-                <a href="https://www.instagram.com/firme_enlatormenta?utm_source=qr&igsh=N2U0NTNqYTRvZHB6" target="_blank">
-                Instagram
-                </a>
-    ·
-                <a href="https://open.spotify.com/show/6vqZwZgnO12WOCNQU6kpkC?si=62cdeba56fe34c6a" target="_blank">
-                Spotify
-                </a>
-    ·
-                <a href="https://open.spotify.com/show/6p2aXCSrcYxpr9NpBl9ivT?si=ba076a311d624e2d" target="_blank">
-                Santiago Z.
-                </a>
+                <a href="https://www.instagram.com/firme_enlatormenta?utm_source=qr&igsh=N2U0NTNqYTRvZHB6" target="_blank">Instagram</a> · 
+                <a href="https://open.spotify.com/show/6vqZwZgnO12WOCNQU6kpkC?si=62cdeba56fe34c6a" target="_blank">Spotify</a> · 
+                <a href="https://open.spotify.com/show/6p2aXCSrcYxpr9NpBl9ivT?si=ba076a311d624e2d" target="_blank">Santiago Z.</a>
             </div>
             <div>Montevideo, Uruguay</div>
         </div>
     </footer>
 
-   <!-- WHATSAPP FLOAT -->
-    <a href="https://chat.whatsapp.com/H4cfFd4T6HF8GLBGlWYW4z"
-        class="whatsapp-float"
-        target="_blank"
-        aria-label="WhatsApp">
-
-        <svg xmlns="http://www.w3.org/2000/svg"
-            width="30"
-            height="30"
-            fill="currentColor"
-            viewBox="0 0 24 24">
-
+    <a href="https://chat.whatsapp.com/H4cfFd4T6HF8GLBGlWYW4z" class="whatsapp-float" target="_blank" aria-label="WhatsApp">
+        <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" viewBox="0 0 24 24">
             <path d="M20.52 3.48A11.82 11.82 0 0012.06 0C5.5 0 .15 5.34.15 11.92c0 2.1.55 4.15 1.6 5.96L0 24l6.3-1.65a11.9 11.9 0 005.76 1.47h.01c6.56 0 11.91-5.35 11.91-11.92 0-3.18-1.24-6.17-3.46-8.42zm-8.46 18.3h-.01a9.9 9.9 0 01-5.05-1.39l-.36-.21-3.74.98 1-3.65-.24-.37a9.87 9.87 0 01-1.52-5.24c0-5.47 4.45-9.92 9.93-9.92 2.65 0 5.13 1.03 7 2.9a9.84 9.84 0 012.9 7c0 5.47-4.45 9.92-9.91 9.92zm5.44-7.44c-.3-.15-1.77-.88-2.04-.98-.27-.1-.47-.15-.67.15-.2.3-.77.98-.95 1.18-.17.2-.35.22-.65.08-.3-.15-1.25-.46-2.38-1.47-.88-.79-1.48-1.76-1.65-2.06-.17-.3-.02-.46.13-.6.13-.13.3-.35.45-.52.15-.18.2-.3.3-.5.1-.2.05-.37-.03-.52-.08-.15-.67-1.62-.92-2.22-.24-.58-.48-.5-.67-.51h-.57c-.2 0-.52.08-.8.37-.27.3-1.05 1.03-1.05 2.5 0 1.47 1.08 2.9 1.23 3.1.15.2 2.13 3.25 5.16 4.55.72.3 1.28.48 1.72.62.72.23 1.38.2 1.9.12.58-.08 1.77-.72 2.02-1.42.25-.7.25-1.3.17-1.42-.07-.12-.27-.2-.57-.35z" />
-
         </svg>
     </a>
+
+    <div class="modal-overlay" id="modalBitacora">
+        <div class="modal-box">
+            <button class="modal-close" id="btnCerrarModal">✕</button>
+            <h2 id="modalTitulo">Título</h2>
+            <p id="modalContenido">Contenido...</p>
+        </div>
+    </div>
+
     <script>
-    let lastScroll = 0;
-    const header = document.querySelector("header");
+        // 1. Controlar comportamiento del Header con scroll
+        let lastScroll = 0;
+        const header = document.querySelector("header");
 
-    window.addEventListener("scroll", () => {
-        const currentScroll = window.pageYOffset;
+        window.addEventListener("scroll", () => {
+            const currentScroll = window.pageYOffset;
+            if (currentScroll > lastScroll && currentScroll > 100) {
+                header.classList.add("hide");
+            } else {
+                header.classList.remove("hide");
+            }
+            lastScroll = currentScroll;
+        });
 
-        if (currentScroll > lastScroll && currentScroll > 100) {
-            header.classList.add("hide");
-        } else {
-            header.classList.remove("hide");
+        // 2. Cargar Bitácoras desde JSON y activar Ventanas Emergentes
+        let listaBitacoras = [];
+        const modal = document.getElementById('modalBitacora');
+        const modalTitulo = document.getElementById('modalTitulo');
+        const modalContenido = document.getElementById('modalContenido');
+        const btnCerrar = document.getElementById('btnCerrarModal');
+
+        fetch('bitacoras.json')
+            .then(response => response.json())
+            .then(data => {
+                listaBitacoras = data;
+                const contenedor = document.getElementById('contenedor-bitacoras');
+                
+                // Crea las tarjetas visuales
+                contenedor.innerHTML = data.map((bitacora, index) => `
+                    <div class="card">
+                        <h3>${bitacora.titulo}</h3>
+                        <p>${bitacora.descripcion}</p>
+                        <a class="btn-leer" data-id="${index}">Leer →</a>
+                    </div>
+                `).join('');
+
+                // Detectar clics en "Leer →"
+                document.querySelectorAll('.btn-leer').forEach(boton => {
+                    boton.addEventListener('click', (e) => {
+                        const id = e.target.getAttribute('data-id');
+                        abrirModal(id);
+                    });
+                });
+            })
+            .catch(error => console.error('Error al cargar las bitácoras:', error));
+
+        // Mostrar el cuadro con el contenido largo
+        function abrirModal(index) {
+            const articulo = listaBitacoras[index];
+            modalTitulo.innerText = articulo.titulo;
+            modalContenido.innerText = articulo.contenido;
+            modal.classList.add('active');
         }
 
-        lastScroll = currentScroll;
-    });
-</script>
-// Cargar bitácoras dinámicamente
-fetch('bitacoras.json')
-    .then(response => response.json())
-    .then(data => {
-        const contenedor = document.getElementById('contenedor-bitacoras');
-        contenedor.innerHTML = data.map(bitacora => `
-            <div class="card">
-                <h3>${bitacora.titulo}</h3>
-                <p>${bitacora.descripcion}</p>
-                <a href="${bitacora.enlace}">Leer →</a>
-            </div>
-        `).join('');
-    })
-    .catch(error => console.error('Error cargando las bitácoras:', error));
+        // Cerrar al darle a la X
+        btnCerrar.addEventListener('click', () => {
+            modal.classList.remove('active');
+        });
+
+        // Cerrar al hacer clic en el fondo borroso oscuro
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                modal.classList.remove('active');
+            }
+        });
+    </script>
 </body>
 </html>
