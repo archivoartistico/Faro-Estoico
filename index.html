@@ -371,46 +371,14 @@
     </section>
 
     <!-- BITACORA -->
-    <section id="bitacora">
-        <div class="container">
-            <h2 class="section-title">
-                Bitácora
-            </h2>
-            <p class="section-text">
-                Reflexiones, lecturas y pensamiento estoico contemporáneo.
-            </p>
-            <div class="cards">
-                <div class="card">
-                    <h3>El silencio y la claridad</h3>
-                    <p>
-                        Una reflexión sobre el exceso de estímulos y la necesidad del pensamiento lento.
-                    </p>
-                    <a href="#">
-                        Leer →
-                    </a>
-                </div>
-                <div class="card">
-                    <h3>La práctica estoica hoy</h3>
-                    <p>
-                        Cómo aplicar principios estoicos clásicos en la vida cotidiana contemporánea.
-                    </p>
-                    <a href="#">
-                        Leer →
-                    </a>
-                </div>
-                <div class="card">
-                    <h3>Comunidad y filosofía</h3>
-                    <p>
-                        Pensar juntos como una forma de construir criterio y conversación.
-                    </p>
-                    <a href="#">
-                        Leer →
-                    </a>
-                </div>
-            </div>
-        </div>
-    </section>
-
+<section id="bitacora">
+    <div class="container">
+        <h2 class="section-title">Bitácora</h2>
+        <p class="section-text">Reflexiones, lecturas y pensamiento estoico contemporáneo.</p>
+        
+        <div class="cards" id="contenedor-bitacoras"></div> 
+    </div>
+</section>
     <!-- BIBLIOTECA -->
     <section id="biblioteca">
         <div class="container">
@@ -509,5 +477,19 @@
         lastScroll = currentScroll;
     });
 </script>
+// Cargar bitácoras dinámicamente
+fetch('bitacoras.json')
+    .then(response => response.json())
+    .then(data => {
+        const contenedor = document.getElementById('contenedor-bitacoras');
+        contenedor.innerHTML = data.map(bitacora => `
+            <div class="card">
+                <h3>${bitacora.titulo}</h3>
+                <p>${bitacora.descripcion}</p>
+                <a href="${bitacora.enlace}">Leer →</a>
+            </div>
+        `).join('');
+    })
+    .catch(error => console.error('Error cargando las bitácoras:', error));
 </body>
 </html>
