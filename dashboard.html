@@ -3,108 +3,190 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Faro Estoico - Dashboard</title>
-    <!-- CDN de Supabase -->
+    <title>Faro Estoico - Dashboard de Bitácoras</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        :root { --primary: #2c3e50; --accent: #d4af37; --light: #f4f4f4; }
-        body { font-family: 'Segoe UI', sans-serif; background: var(--light); margin: 0; padding: 20px; }
-        .container { max-width: 800px; margin: 0 auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        :root { 
+            --primary: #0f2740; 
+            --accent: #eadecc; 
+            --light: #f5f1ea; 
+            --dark: #1d1d1d;
+        }
+        body { 
+            font-family: 'Segoe UI', system-ui, sans-serif; 
+            background: var(--light); 
+            margin: 0; 
+            padding: 20px; 
+            color: var(--dark);
+        }
+        .container { 
+            max-width: 700px; 
+            margin: 40px auto; 
+            background: white; 
+            padding: 40px; 
+            border-radius: 16px; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05); 
+            border: 1px solid #ddd;
+        }
         .hidden { display: none !important; }
-        input, textarea, button { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; }
-        button { background: var(--primary); color: white; border: none; cursor: pointer; font-weight: bold; }
-        button:hover { background: #1a252f; }
-        .logout-btn { background: #e74c3c; width: auto; float: right; }
-        .reflexion-item { background: #f9f9f9; padding: 15px; margin: 10px 0; border-left: 4px solid var(--accent); }
+        
+        h2 { 
+            font-size: 2rem; 
+            margin-bottom: 20px; 
+            color: var(--primary);
+            border-bottom: 2px solid var(--accent);
+            padding-bottom: 10px;
+        }
+        
+        label {
+            font-weight: 600;
+            display: block;
+            margin-top: 15px;
+            color: #444;
+        }
+
+        input, textarea, button { 
+            width: 100%; 
+            padding: 12px; 
+            margin: 8px 0 16px 0; 
+            border: 1px solid #ccc; 
+            border-radius: 8px; 
+            box-sizing: border-box; 
+            font-size: 1rem;
+        }
+        
+        textarea { resize: vertical; min-height: 120px; }
+
+        button { 
+            background: var(--primary); 
+            color: white; 
+            border: none; 
+            cursor: pointer; 
+            font-weight: bold; 
+            transition: background 0.3s;
+            margin-top: 10px;
+        }
+        button:hover { background: #163a5f; }
+        
+        .logout-btn { 
+            background: #fff; 
+            color: #c0392b; 
+            border: 1px solid #c0392b; 
+            margin-top: 30px;
+        }
+        .logout-btn:hover { background: #fce4e4; }
+
+        .preview-section {
+            margin-top: 40px;
+            background: #fafafa;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid var(--primary);
+        }
+        .bitacora-item {
+            padding: 15px 0;
+            border-bottom: 1px solid #eee;
+        }
+        .bitacora-item:last-child { border-bottom: none; }
+        .bitacora-item h4 { margin: 0 0 5px 0; color: var(--primary); font-size: 1.2rem; }
+        .bitacora-item p { margin: 0; color: #555; font-size: 0.95rem; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <!-- 1. SECCIÓN DE LOGIN -->
-    <div id="login-section">
-        <h2>🔑 Acceso al Faro Estoico</h2>
-        <form id="login-form">
-            <input type="email" id="email" placeholder="Correo electrónico" required>
-            <input type="password" id="password" placeholder="Contraseña" required>
-            <button type="submit">Ingresar al Panel</button>
+    <div id="authSection">
+        <h2>Panel de Acceso Privado</h2>
+        <p style="color: #666; margin-bottom: 25px;">Por seguridad, debes iniciar sesión para gestionar las bitácoras.</p>
+        <form id="loginForm">
+            <label for="email">Correo Electrónico</label>
+            <input type="email" id="email" placeholder="tu-correo@ejemplo.com" required>
+            
+            <label for="password">Contraseña</label>
+            <input type="password" id="password" placeholder="••••••••" required>
+            
+            <button type="submit">Iniciar Sesión</button>
         </form>
     </div>
 
-    <!-- 2. SECCIÓN DEL DASHBOARD (PROTEGIDO) -->
-    <div id="dashboard-section" class="hidden">
-        <button class="logout-btn" id="btn-logout">Cerrar Sesión</button>
-        <h2>🏛️ Panel de Gestión Estoica</h2>
-        <p>Bienvenido al administrador de contenidos.</p>
+    <div id="dashboardSection" class="hidden">
+        <h2>Nueva Bitácora</h2>
+        <p style="color: #666;">El contenido publicado aparecerá inmediatamente en la web principal.</p>
         
-        <hr>
-        
-        <h3>Agregar Nueva Reflexión</h3>
-        <form id="content-form">
-            <input type="text" id="autor" placeholder="Autor (ej. Marco Aurelio)" required>
-            <textarea id="contenido" rows="4" placeholder="Escribe la cita o reflexión aquí..." required></textarea>
-            <button type="submit">Publicar en el Faro</button>
+        <form id="contentForm">
+            <label for="titulo">Título de la Bitácora</label>
+            <input type="text" id="titulo" placeholder="Ej: El silencio y la claridad" required>
+            
+            <label for="descripcion">Breve Descripción (Aparece en la tarjeta inicial)</label>
+            <input type="text" id="descripcion" placeholder="Ej: Una reflexión sobre el exceso de estímulos..." required>
+            
+            <label for="contenido">Contenido Completo (Aparece dentro del modal al hacer clic en Leer)</label>
+            <textarea id="contenido" placeholder="Escribe aquí toda tu reflexión o artículo..." required></textarea>
+            
+            <button type="submit">Publicar en la Web</button>
         </form>
 
-        <h3>Reflexiones Actuales</h3>
-        <div id="lista-reflexiones"></div>
+        <div class="preview-section">
+            <h3 style="margin-top: 0; color: var(--primary);">Últimas bitácoras publicadas:</h3>
+            <div id="listaBitacoras">Cargando bitácoras...</div>
+        </div>
+
+        <button id="btnLogout" class="logout-btn">Cerrar Sesión Segura</button>
     </div>
 </div>
+
 <script>
-    // Configuración con tus credenciales reales del Faro Estoico
-    const SUPABASE_URL = "https://fdblmxeobrgzopcnjipf.supabase.co"; 
-    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZkYmxteGVvYnJnem9wY25qaXBmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk4NzM3NjEsImV4cCI6MjA5NTQ0OTc2MX0.2S_LO9ppd4QjYYChRvKxH9i8w1XRUARhEiWOJC-z6AU";
-    const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-    const loginSection = document.getElementById('login-section');
-    const dashboardSection = document.getElementById('dashboard-section');
-    const loginForm = document.getElementById('login-form');
-    const contentForm = document.getElementById('content-form');
-    const listaReflexiones = document.getElementById('lista-reflexiones');
-    const btnLogout = document.getElementById('btn-logout');
-
-    // Cambiar los placeholders dinámicamente para que el dueño sepa qué escribir
-    document.getElementById('autor').placeholder = "Título de la Bitácora";
-    document.getElementById('contenido').placeholder = "Contenido completo de la reflexión...";
+    // Configuración de tu proyecto Supabase
+    const supabaseUrl = 'https://fdblmxeobrgzopcnjipf.supabase.co'; 
+    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZkYmxteGVvYnJnem9wY25qaXBmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk4NzM3NjEsImV4cCI6MjA5NTQ0OTc2MX0.2S_LO9ppd4QjYYChRvKxH9i8w1XRUARhEiWOJC-z6AU'; 
     
-    // Añadimos un campo extra para la descripción corta en el formulario de forma dinámica
-    const descInput = document.createElement('input');
-    descInput.id = 'descripcion_corta';
-    descInput.placeholder = "Descripción corta (resumen para la tarjeta)";
-    descInput.required = true;
-    contentForm.insertBefore(descInput, document.getElementById('contenido'));
+    const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
 
-    // Control de sesión
+    // Elementos del DOM
+    const authSection = document.getElementById('authSection');
+    const dashboardSection = document.getElementById('dashboardSection');
+    const loginForm = document.getElementById('loginForm');
+    const contentForm = document.getElementById('contentForm');
+    const btnLogout = document.getElementById('btnLogout');
+    const listaBitacoras = document.getElementById('listaBitacoras');
+
+    // Comprobar el estado de la sesión al cargar la página
     supabase.auth.onAuthStateChange((event, session) => {
         if (session) {
-            loginSection.classList.add('hidden');
+            authSection.classList.add('hidden');
             dashboardSection.classList.remove('hidden');
             cargarBitacoras();
         } else {
-            loginSection.classList.remove('hidden');
+            authSection.classList.remove('hidden');
             dashboardSection.classList.add('hidden');
         }
     });
 
-    // Login
+    // Manejar el Inicio de Sesión
     loginForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         const email = document.getElementById('email').value;
         const password = document.getElementById('password').value;
+
         const { error } = await supabase.auth.signInWithPassword({ email, password });
-        if (error) alert("Error: " + error.message);
+        if (error) {
+            alert("Error de autenticación: " + error.message);
+        }
     });
 
-    // Logout
-    btnLogout.addEventListener('click', async () => { await supabase.auth.signOut(); });
+    // Manejar Cierre de Sesión
+    btnLogout.addEventListener('click', async () => {
+        await supabase.auth.signOut();
+    });
 
-    // Guardar nueva bitácora
+    // Insertar nueva bitácora en la Base de Datos
     contentForm.addEventListener('submit', async (e) => {
         e.preventDefault();
-        const titulo = document.getElementById('autor').value; // usa el input existente
-        const descripcion = document.getElementById('descripcion_corta').value;
+        const titulo = document.getElementById('titulo').value;
+        const descripcion = document.getElementById('descripcion').value;
         const contenido = document.getElementById('contenido').value;
 
+        // Enviamos los datos directamente a tu tabla 'bitacoras'
         const { error } = await supabase.from('bitacoras').insert([{ titulo, descripcion, contenido }]);
         
         if (error) {
@@ -116,17 +198,25 @@
         }
     });
 
-    // Cargar bitácoras en el panel
+    // Cargar y mostrar lista de bitácoras existentes como vista previa
     async function cargarBitacoras() {
-        const { data, error } = await supabase.from('bitacoras').select('*').order('id', { ascending: false });
-        if (error) return console.error(error);
+        const { data, error } = await supabase.from('bitacoras').select('titulo, descripcion').order('id', { ascending: false });
+        if (error) {
+            listaBitacoras.innerHTML = 'Error al cargar las bitácoras.';
+            return console.error(error);
+        }
         
-        listaReflexiones.innerHTML = '';
+        if (!data || data.length === 0) {
+            listaBitacoras.innerHTML = '<em style="color:#888;">No hay bitácoras publicadas aún.</em>';
+            return;
+        }
+
+        listaBitacoras.innerHTML = '';
         data.forEach(item => {
-            listaReflexiones.innerHTML += `
-                <div class="reflexion-item">
-                    <strong>📝 ${item.titulo}</strong>
-                    <p><em>${item.descripcion}</em></p>
+            listaBitacoras.innerHTML += `
+                <div class="bitacora-item">
+                    <h4>${item.titulo}</h4>
+                    <p>${item.descripcion}</p>
                 </div>
             `;
         });
