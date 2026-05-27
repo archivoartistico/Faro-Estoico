@@ -110,15 +110,48 @@
         .actions { display: flex; gap: 10px; }
         .btn-sm { padding: 6px 12px; font-size: 0.85rem; border-radius: 6px; }
 
-        .hidden { display: none; }
+        .hidden { display: none !important; }
+
+        /* Login Box */
+        .login-container {
+            max-width: 400px;
+            margin: 100px auto;
+            background: white;
+            padding: 40px;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            text-align: center;
+        }
+        .login-container h3 {
+            font-family: system-ui;
+            color: var(--primary);
+            margin-bottom: 25px;
+        }
     </style>
 </head>
 <body>
 
-    <div class="container">
+    <div id="login-screen" class="login-container">
+        <h3>Acceso al Faro Interior</h3>
+        <form id="login-form">
+            <label for="login-email" style="text-align: left;">Correo Electrónico</label>
+            <input type="email" id="login-email" placeholder="gabrielrios1882@gmail.com" required>
+            
+            <label for="login-password" style="text-align: left;">Contraseña</label>
+            <input type="password" id="login-password" placeholder="••••••••" required>
+            
+            <button type="submit" class="btn btn-primary" style="margin-top: 10px;">Identificarse</button>
+        </form>
+        <a href="index.html" style="color: #777; font-size: 0.9rem;">← Volver a la web</a>
+    </div>
+
+    <div id="dashboard-screen" class="container hidden">
         <div class="header-panel">
             <h2>Panel de Control Interior</h2>
-            <a href="index.html" class="btn-volver">← Volver al Faro</a>
+            <div>
+                <button onclick="cerrarSesion()" class="btn btn-secondary btn-sm" style="margin-right: 10px;">Cerrar Sesión</button>
+                <a href="index.html" class="btn-volver">← Volver al Faro</a>
+            </div>
         </div>
 
         <div class="tabs">
@@ -147,8 +180,7 @@
             </form>
 
             <h3>Tus Publicaciones Actuales</h3>
-            <div id="lista-gestion-bitacoras">
-                </div>
+            <div id="lista-gestion-bitacoras"></div>
         </div>
 
         <div id="frase-tab" class="tab-content">
@@ -170,13 +202,52 @@
     </div>
 
     <script>
-        // --- CONFIGURACIÓN DE SUPABASE ---
-        const SUPABASE_URL = "https://wzbcshbywbyyvofwclmd.supabase.co";
-        const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind6YmNzaGJ5d2J5eXZvZndjbG1kIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTY4Mzg2MDYsImV4cCI6MjAzMjQxNDYwNn0.Vb3w6V-fC-j59U2Hj2E_1L9gXp1Zl_K8_fU6z3l9078";
+        // --- SE CORRIGE LA URL DE SUPABASE PARA COINCIDIR CON INDEX.HTML ---
+        const SUPABASE_URL = "https://fdblmxeobrgzopcnjipf.supabase.co";
+        const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZkYmxteGVvYnJnem9wY25qaXBmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk4NzM3NjEsImV4cCI6MjA5NTQ0OTc2MX0.2S_LO9ppd4QjYYChRvKxH9i8w1XRUARhEiWOJC-z6AU";
         const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
         const contentForm = document.getElementById('content-form');
         const fraseForm = document.getElementById('frase-form');
+        const loginForm = document.getElementById('login-form');
+
+        // --- SISTEMA DE CONTROL DE ACCESO ---
+        async function verificarSesion() {
+            const { data: { session } } = await supabase.auth.getSession();
+            
+            if (session && session.user.email === 'gabrielrios1882@gmail.com') {
+                document.getElementById('login-screen').classList.add('hidden');
+                document.getElementById('dashboard-screen').classList.remove('hidden');
+                // Carga inicial autorizada
+                cargarBitacorasGestion();
+                cargarFraseActualDashboard();
+            } else {
+                document.getElementById('login-screen').classList.remove('hidden');
+                document.getElementById('dashboard-screen').classList.add('hidden');
+            }
+        }
+
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+
+            const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+
+            if (error) {
+                alert("Error de autenticación: " + error.message);
+            } else if (data.user.email !== 'gabrielrios1882@gmail.com') {
+                alert("Acceso denegado. Este panel es exclusivo para el administrador.");
+                await supabase.auth.signOut();
+            } else {
+                verificarSesion();
+            }
+        });
+
+        async function cerrarSesion() {
+            await supabase.auth.signOut();
+            window.location.reload();
+        }
 
         // --- SISTEMA NAVEGACIÓN PESTAÑAS ---
         function switchTab(tabId) {
@@ -187,9 +258,9 @@
             event.currentTarget.classList.add('active');
         }
 
-        // --- LÓGICA DE BITÁCORAS (AGREGAR / EDITAR / ELIMINAR) ---
+        // --- LÓGICA DE BITÁCORAS ---
         async function cargarBitacorasGestion() {
-            const { data, error } = await supabase.from('bitacoras').select('*').order('created_at', { ascending: false });
+            const { data, error } = await supabase.from('bitacoras').select('*').order('id', { ascending: false });
             const contenedor = document.getElementById('lista-gestion-bitacoras');
             
             if(error || !data || data.length === 0) {
@@ -219,12 +290,10 @@
             const contenido = document.getElementById('contenido').value;
 
             if(id) {
-                // Actualizar una existente
                 const { error } = await supabase.from('bitacoras').update({ titulo, descripcion, contenido }).eq('id', id);
                 if (error) alert(error.message);
                 else alert("¡Bitácora actualizada correctamente!");
             } else {
-                // Insertar nueva
                 const { error } = await supabase.from('bitacoras').insert([{ titulo, descripcion, contenido }]);
                 if (error) alert(error.message);
                 else alert("¡Nueva bitácora agregada de forma exitosa!");
@@ -279,7 +348,6 @@
             const texto = document.getElementById('fraseTexto').value;
             const autor = document.getElementById('fraseAutor').value;
 
-            // Al usar upsert forzando el id: 1, garantizamos que nunca se cree un segundo registro
             const { error } = await supabase.from('frases_dia').upsert({ id: 1, texto, autor });
             
             if (error) {
@@ -289,7 +357,6 @@
             }
         });
 
-        // Auxiliares para formatear strings con comillas de forma segura en JS inline
         function escapeJS(str) {
             return str.replace(/'/g, "\\'").replace(/"/g, '&quot;').replace(/\n/g, '\\n').replace(/\r/g, '\\r');
         }
@@ -297,9 +364,8 @@
             return str.replace(/\\'/g, "'").replace(/&quot;/g, '"').replace(/\\n/g, '\n').replace(/\\r/g, '\r');
         }
 
-        // Carga inicial al cargar la página
-        cargarBitacorasGestion();
-        cargarFraseActualDashboard();
+        // Inicialización pasiva por seguridad
+        verificarSesion();
     </script>
 </body>
 </html>
