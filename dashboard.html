@@ -202,7 +202,7 @@
     </div>
 
     <script>
-        // --- SE CORRIGE LA URL DE SUPABASE PARA COINCIDIR CON INDEX.HTML ---
+        // --- CONEXIÓN UNIFICADA A LA BASE DE DATOS DE INDEX.HTML ---
         const SUPABASE_URL = "https://fdblmxeobrgzopcnjipf.supabase.co";
         const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZkYmxteGVvYnJnem9wY25qaXBmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk4NzM3NjEsImV4cCI6MjA5NTQ0OTc2MX0.2S_LO9ppd4QjYYChRvKxH9i8w1XRUARhEiWOJC-z6AU";
         const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
@@ -218,7 +218,6 @@
             if (session && session.user.email === 'gabrielrios1882@gmail.com') {
                 document.getElementById('login-screen').classList.add('hidden');
                 document.getElementById('dashboard-screen').classList.remove('hidden');
-                // Carga inicial autorizada
                 cargarBitacorasGestion();
                 cargarFraseActualDashboard();
             } else {
@@ -236,11 +235,11 @@
 
             if (error) {
                 alert("Error de autenticación: " + error.message);
-            } else if (data.user.email !== 'gabrielrios1882@gmail.com') {
-                alert("Acceso denegado. Este panel es exclusivo para el administrador.");
+            } else if (data && data.user && data.user.email !== 'gabrielrios1882@gmail.com') {
+                alert("Acceso denegado. Panel exclusivo.");
                 await supabase.auth.signOut();
             } else {
-                verificarSesion();
+                await verificarSesion();
             }
         });
 
@@ -255,7 +254,10 @@
             document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
             
             document.getElementById(tabId).classList.add('active');
-            event.currentTarget.classList.add('active');
+            
+            if (window.event && window.event.currentTarget) {
+                window.event.currentTarget.classList.add('active');
+            }
         }
 
         // --- LÓGICA DE BITÁCORAS ---
@@ -334,7 +336,7 @@
             }
         }
 
-        // --- LÓGICA DE LA FRASE DEL DÍA (SIEMPRE ID = 1) ---
+        // --- LÓGICA DE LA FRASE DEL DÍA ---
         async function cargarFraseActualDashboard() {
             const { data, error } = await supabase.from('frases_dia').select('*').eq('id', 1).single();
             if(!error && data) {
@@ -364,7 +366,6 @@
             return str.replace(/\\'/g, "'").replace(/&quot;/g, '"').replace(/\\n/g, '\n').replace(/\\r/g, '\r');
         }
 
-        // Inicialización pasiva por seguridad
         verificarSesion();
     </script>
 </body>
