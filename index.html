@@ -162,10 +162,25 @@
 
         /* CARDS */
         .cards {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            display: flex;
             gap: 24px;
             margin-top: 50px;
+            overflow-x: auto;
+            padding-bottom: 20px;
+            scroll-snap-type: x mandatory;
+            -webkit-overflow-scrolling: touch;
+        }
+        /* Diseña una barra de scroll sutil y elegante */
+        .cards::-webkit-scrollbar {
+            height: 8px;
+        }
+        .cards::-webkit-scrollbar-track {
+            background: #eadecc;
+            border-radius: 999px;
+        }
+        .cards::-webkit-scrollbar-thumb {
+            background: #0f2740;
+            border-radius: 999px;
         }
         .card {
             background: white;
@@ -173,6 +188,10 @@
             border-radius: 18px;
             border: 1px solid #ddd;
             transition: 0.3s;
+            min-width: 320px; /* Tamaño mínimo de cada tarjeta */
+            max-width: 400px;
+            flex: 0 0 auto;
+            scroll-snap-align: start;
         }
         .card:hover {
             transform: translateY(-5px);
