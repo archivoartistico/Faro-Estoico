@@ -6,6 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Faro Estoico</title>
 
+    <link rel="icon" type="image/jpeg" href="Estoicon.png">
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@500;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -63,17 +65,12 @@
             align-items: center;
             gap: 14px;
         }
-        .logo-icon {
+        /* Ajustes para el nuevo logo en imagen */
+        .logo-img {
             width: 44px;
             height: 44px;
             border-radius: 50%;
-            background: #0f2740;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 1.2rem;
-            font-weight: 600;
+            object-fit: cover;
             box-shadow: 0 4px 12px rgba(15, 39, 64, 0.15);
         }
         .logo {
@@ -170,7 +167,6 @@
             scroll-snap-type: x mandatory;
             -webkit-overflow-scrolling: touch;
         }
-        /* Diseña una barra de scroll sutil y elegante */
         .cards::-webkit-scrollbar {
             height: 8px;
         }
@@ -188,7 +184,7 @@
             border-radius: 18px;
             border: 1px solid #ddd;
             transition: 0.3s;
-            min-width: 320px; /* Tamaño mínimo de cada tarjeta */
+            min-width: 320px;
             max-width: 400px;
             flex: 0 0 auto;
             scroll-snap-align: start;
@@ -258,7 +254,7 @@
             transform: scale(1.08);
         }
 
-        /* VENTANA MODAL (CUADRADO DE LECTURA FLOTANTE) */
+        /* VENTANA MODAL */
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -306,7 +302,7 @@
         .modal-box p {
             color: #333;
             font-size: 1.1rem;
-            white-space: pre-line; /* Mantiene los saltos de línea */
+            white-space: pre-line;
         }
         .modal-close {
             position: absolute;
@@ -366,7 +362,7 @@
     <header>
         <div class="container nav">
             <div class="logo-wrapper">
-                <div class="logo-icon">☼</div>
+                <img src="Estoicon.png" alt="Logo Faro Estoico" class="logo-img">
                 <div class="logo">FARO ESTOICO</div>
             </div>
             <nav class="menu">
@@ -470,7 +466,6 @@
     </div>
 
     <script>
-        // 1. Controlar comportamiento del Header con scroll
         let lastScroll = 0;
         const header = document.querySelector("header");
 
@@ -484,7 +479,6 @@
             lastScroll = currentScroll;
         });
 
-        // 2. Cargar Bitácoras desde JSON y activar Ventanas Emergentes
         let listaBitacoras = [];
         const modal = document.getElementById('modalBitacora');
         const modalTitulo = document.getElementById('modalTitulo');
@@ -497,7 +491,6 @@
                 listaBitacoras = data;
                 const contenedor = document.getElementById('contenedor-bitacoras');
                 
-                // Crea las tarjetas visuales
                 contenedor.innerHTML = data.map((bitacora, index) => `
                     <div class="card">
                         <h3>${bitacora.titulo}</h3>
@@ -506,7 +499,6 @@
                     </div>
                 `).join('');
 
-                // Detectar clics en "Leer →"
                 document.querySelectorAll('.btn-leer').forEach(boton => {
                     boton.addEventListener('click', (e) => {
                         const id = e.target.getAttribute('data-id');
@@ -516,7 +508,6 @@
             })
             .catch(error => console.error('Error al cargar las bitácoras:', error));
 
-        // Mostrar el cuadro con el contenido largo
         function abrirModal(index) {
             const articulo = listaBitacoras[index];
             modalTitulo.innerText = articulo.titulo;
@@ -524,12 +515,10 @@
             modal.classList.add('active');
         }
 
-        // Cerrar al darle a la X
         btnCerrar.addEventListener('click', () => {
             modal.classList.remove('active');
         });
 
-        // Cerrar al hacer clic en el fondo borroso oscuro
         modal.addEventListener('click', (e) => {
             if (e.target === modal) {
                 modal.classList.remove('active');
