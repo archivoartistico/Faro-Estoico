@@ -50,14 +50,12 @@
         <div id="lista-reflexiones"></div>
     </div>
 </div>
-
 <script>
-    // Configuración de Supabase (Reemplaza con tus credenciales de Supabase)
-    const SUPABASE_URL = "TU_SUPABASE_URL";
-    const SUPABASE_ANON_KEY = "TU_SUPABASE_ANON_KEY";
+    // Configuración con tus credenciales reales del Faro Estoico
+    const SUPABASE_URL = "https://fdblmxeobrgzopcnjipf.supabase.co"; 
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZkYmxteGVvYnJnem9wY25qaXBmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk4NzM3NjEsImV4cCI6MjA5NTQ0OTc2MX0.2S_LO9ppd4QjYYChRvKxH9i8w1XRUARhEiWOJC-z6AU";
     const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    // Elementos del DOM
     const loginSection = document.getElementById('login-section');
     const dashboardSection = document.getElementById('dashboard-section');
     const loginForm = document.getElementById('login-form');
@@ -65,61 +63,70 @@
     const listaReflexiones = document.getElementById('lista-reflexiones');
     const btnLogout = document.getElementById('btn-logout');
 
-    // Comprobar estado de la sesión al cargar la página
+    // Cambiar los placeholders dinámicamente para que el dueño sepa qué escribir
+    document.getElementById('autor').placeholder = "Título de la Bitácora";
+    document.getElementById('contenido').placeholder = "Contenido completo de la reflexión...";
+    
+    // Añadimos un campo extra para la descripción corta en el formulario de forma dinámica
+    const descInput = document.createElement('input');
+    descInput.id = 'descripcion_corta';
+    descInput.placeholder = "Descripción corta (resumen para la tarjeta)";
+    descInput.required = true;
+    contentForm.insertBefore(descInput, document.getElementById('contenido'));
+
+    // Control de sesión
     supabase.auth.onAuthStateChange((event, session) => {
         if (session) {
             loginSection.classList.add('hidden');
             dashboardSection.classList.remove('hidden');
-            cargarReflexiones();
+            cargarBitacoras();
         } else {
             loginSection.classList.remove('hidden');
             dashboardSection.classList.add('hidden');
         }
     });
 
-    // Manejar el Inicio de Sesión
+    // Login
     loginForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         const email = document.getElementById('email').value;
         const password = document.getElementById('password').value;
-
         const { error } = await supabase.auth.signInWithPassword({ email, password });
-        if (error) alert("Error de autenticación: " + error.message);
+        if (error) alert("Error: " + error.message);
     });
 
-    // Manejar Cierre de Sesión
-    btnLogout.addEventListener('click', async () => {
-        await supabase.auth.signOut();
-    });
+    // Logout
+    btnLogout.addEventListener('click', async () => { await supabase.auth.signOut(); });
 
-    // Insertar nueva reflexión en la Base de Datos
+    // Guardar nueva bitácora
     contentForm.addEventListener('submit', async (e) => {
         e.preventDefault();
-        const autor = document.getElementById('autor').value;
+        const titulo = document.getElementById('autor').value; // usa el input existente
+        const descripcion = document.getElementById('descripcion_corta').value;
         const contenido = document.getElementById('contenido').value;
 
-        const { error } = await supabase.from('reflexiones').insert([{ autor, contenido }]);
+        const { error } = await supabase.from('bitacoras').insert([{ titulo, descripcion, contenido }]);
         
         if (error) {
             alert("Error al guardar: " + error.message);
         } else {
-            alert("Reflexión guardada con éxito");
+            alert("¡Bitácora publicada con éxito!");
             contentForm.reset();
-            cargarReflexiones();
+            cargarBitacoras();
         }
     });
 
-    // Cargar y mostrar reflexiones
-    async function cargarReflexiones() {
-        const { data, error } = await supabase.from('reflexiones').select('*').order('fecha_creacion', { ascending: false });
+    // Cargar bitácoras en el panel
+    async function cargarBitacoras() {
+        const { data, error } = await supabase.from('bitacoras').select('*').order('id', { ascending: false });
         if (error) return console.error(error);
         
         listaReflexiones.innerHTML = '';
         data.forEach(item => {
             listaReflexiones.innerHTML += `
                 <div class="reflexion-item">
-                    <strong>${item.autor}</strong>
-                    <p>"${item.contenido}"</p>
+                    <strong>📝 ${item.titulo}</strong>
+                    <p><em>${item.descripcion}</em></p>
                 </div>
             `;
         });

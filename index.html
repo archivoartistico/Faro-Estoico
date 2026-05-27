@@ -468,6 +468,7 @@
     </div>
 
     <script>
+        // --- EFECTO DEL HEADER (OCULTAR AL BAJAR) ---
         let lastScroll = 0;
         const header = document.querySelector("header");
 
@@ -480,35 +481,59 @@
             }
             lastScroll = currentScroll;
         });
+    </script>
 
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <script>
+        // --- LÓGICA DE LA BITÁCORA Y CONEXIÓN A SUPABASE ---
         let listaBitacoras = [];
         const modal = document.getElementById('modalBitacora');
         const modalTitulo = document.getElementById('modalTitulo');
         const modalContenido = document.getElementById('modalContenido');
         const btnCerrar = document.getElementById('btnCerrarModal');
 
-        fetch('bitacoras.json')
-            .then(response => response.json())
-            .then(data => {
-                listaBitacoras = data;
-                const contenedor = document.getElementById('contenedor-bitacoras');
-                
-                contenedor.innerHTML = data.map((bitacora, index) => `
-                    <div class="card">
-                        <h3>${bitacora.titulo}</h3>
-                        <p>${bitacora.descripcion}</p>
-                        <a class="btn-leer" data-id="${index}">Leer →</a>
-                    </div>
-                `).join('');
+        // Conexión oficial con Supabase
+        const supabaseUrl = 'https://fdblmxeobrgzopcnjipf.supabase.co'; 
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZkYmxteGVvYnJnem9wY25qaXBmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk4NzM3NjEsImV4cCI6MjA5NTQ0OTc2MX0.2S_LO9ppd4QjYYChRvKxH9i8w1XRUARhEiWOJC-z6AU'; 
 
-                document.querySelectorAll('.btn-leer').forEach(boton => {
-                    boton.addEventListener('click', (e) => {
-                        const id = e.target.getAttribute('data-id');
-                        abrirModal(id);
-                    });
+        // Esto sobreescribe la variable con la conexión activa perfectamente:
+        const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+        // Traer datos de la tabla 'bitacoras' en Supabase de forma dinámica
+        async function obtenerBitacorasDesdeBaseDeDatos() {
+            const { data, error } = await supabase.from('bitacoras').select('*').order('id', { ascending: false });
+            
+            if (error) {
+                console.error('Error al cargar las bitácoras desde Supabase:', error);
+                return;
+            }
+
+            listaBitacoras = data;
+            const contenedor = document.getElementById('contenedor-bitacoras');
+            
+            if(!data || data.length === 0) {
+                contenedor.innerHTML = "<p style='text-align:center; color:#777; width: 100%;'>Próximamente nuevas bitácoras...</p>";
+                return;
+            }
+
+            // Pintar las tarjetas con los datos de la BD
+            contenedor.innerHTML = data.map((bitacora, index) => `
+                <div class="card">
+                    <h3>${bitacora.titulo}</h3>
+                    <p>${bitacora.descripcion}</p>
+                    <a class="btn-leer" data-id="${index}">Leer →</a>
+                </div>
+            `).join('');
+
+            // Asignar los eventos de click para abrir el modal
+            document.querySelectorAll('.btn-leer').forEach(boton => {
+                boton.addEventListener('click', (e) => {
+                    const id = e.target.getAttribute('data-id');
+                    abrirModal(id);
                 });
-            })
-            .catch(error => console.error('Error al cargar las bitácoras:', error));
+            });
+        }
 
         function abrirModal(index) {
             const articulo = listaBitacoras[index];
@@ -517,30 +542,11 @@
             modal.classList.add('active');
         }
 
-        btnCerrar.addEventListener('click', () => {
-            modal.classList.remove('active');
-        });
+        btnCerrar.addEventListener('click', () => { modal.classList.remove('active'); });
+        modal.addEventListener('click', (e) => { if (e.target === modal) modal.classList.remove('active'); });
 
-        modal.addEventListener('click', (e) => {
-            if (e.target === modal) {
-                modal.classList.remove('active');
-            }
-        });
+        // Ejecutar la carga automática al entrar a la web
+        obtenerBitacorasDesdeBaseDeDatos();
     </script>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-    <script>
-        // Reemplaza esto con el ID de proyecto que buscas en tu panel
-        const supabaseUrl = 'https://fdblmxeobrgzopcnjipf.supabase.co'; 
-        
-        // Aquí pegas la clave "anon public" larga que tenías en el bloc de notas
-        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZkYmxteGVvYnJnem9wY25qaXBmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk4NzM3NjEsImV4cCI6MjA5NTQ0OTc2MX0.2S_LO9ppd4QjYYChRvKxH9i8w1XRUARhEiWOJC-z6AU'; 
-        
-        // Inicializamos el cliente de Supabase
-        const supabase = supabase.createClient(supabaseUrl, supabaseKey);
-
-        console.log("Supabase conectado correctamente:", supabase);
-    </script>
-</body>
 </body>
 </html>
