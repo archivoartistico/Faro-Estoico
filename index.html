@@ -67,7 +67,6 @@
             align-items: center;
             gap: 14px;
         }
-        /* Ajustes para el nuevo logo en imagen */
         .logo-img {
             width: 44px;
             height: 44px;
@@ -157,6 +156,32 @@
             max-width: 750px;
             color: #444;
             font-size: 1.05rem;
+        }
+
+        /* FRASE DEL DIA */
+        .frase-container {
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.02);
+            margin-top: 20px;
+        }
+        .frase-texto {
+            font-family: 'EB Garamond', serif;
+            font-size: 1.8rem;
+            font-style: italic;
+            color: #0f2740;
+            line-height: 1.4;
+            margin-bottom: 15px;
+        }
+        .frase-autor {
+            font-size: 0.95rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: #777;
         }
 
         /* CARDS */
@@ -323,38 +348,18 @@
 
         /* RESPONSIVE */
         @media(max-width: 768px) {
-            .hero h1 {
-                font-size: 3.5rem;
-            }
-            .section-title {
-                font-size: 2.4rem;
-            }
-            .menu {
-                gap: 16px;
-                font-size: 0.9rem;
-            }
-            .community-box {
-                padding: 40px 30px;
-            }
+            .hero h1 { font-size: 3.5rem; }
+            .section-title { font-size: 2.4rem; }
+            .menu { gap: 16px; font-size: 0.9rem; }
+            .community-box { padding: 40px 30px; }
+            .frase-texto { font-size: 1.5rem; }
         }
         @media(max-width: 600px) {
-            .nav {
-                flex-direction: column;
-                gap: 16px;
-            }
-            .menu {
-                flex-wrap: wrap;
-                justify-content: center;
-            }
-            .hero {
-                text-align: center;
-            }
-            .buttons {
-                justify-content: center;
-            }
-            .logo-wrapper {
-                justify-content: center;
-            }
+            .nav { flex-direction: column; gap: 16px; }
+            .menu { flex-wrap: wrap; justify-content: center; }
+            .hero { text-align: center; }
+            .buttons { justify-content: center; }
+            .logo-wrapper { justify-content: center; }
         }
     </style>
 </head>
@@ -365,10 +370,11 @@
         <div class="container nav">
             <div class="logo-wrapper">
                 <img src="Estoicon.png" alt="Logo Faro Estoico" class="logo-img" width="44" height="44" decoding="async">
-            <div class="logo">FARO ESTOICO</div>
-        </div>
+                <div class="logo">FARO ESTOICO</div>
+            </div>
             <nav class="menu">
                 <a href="#inicio">Inicio</a>
+                <a href="#frase-seccion">Frase</a>
                 <a href="#bitacora">Bitácora</a>
                 <a href="#biblioteca">Biblioteca</a>
                 <a href="#comunidad">Comunidad</a>
@@ -396,6 +402,16 @@
         <div class="container">
             <h2 class="section-title">Sobre Faro Estoico</h2>
             <p class="section-text">Faro Estoico es un espacio de reflexión. Un lugar para pensar, leer, conversar y desarrollar pensamiento crítico. Una comunidad moderna orientada a la práctica y la claridad.</p>
+        </div>
+    </section>
+
+    <section id="frase-seccion">
+        <div class="container">
+            <h2 class="section-title">Frase del día</h2>
+            <div class="frase-container">
+                <p class="frase-texto" id="txt-frase">"Cargando sabiduría estoica..."</p>
+                <p class="frase-autor" id="txt-autor"></p>
+            </div>
         </div>
     </section>
 
@@ -440,7 +456,7 @@
         </div>
     </section>
 
-    <footer id="contacto">
+    <footer>
         <div class="container footer-content">
             <div>FARO ESTOICO</div>
             <div>gabrielrios1882@gmail.com</div>
@@ -471,7 +487,6 @@
     </div>
 
     <script>
-        // --- EFECTO DEL HEADER (OCULTAR AL BAJAR) ---
         let lastScroll = 0;
         const header = document.querySelector("header");
 
@@ -489,26 +504,34 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
     <script>
-        // --- LÓGICA DE LA BITÁCORA Y CONEXIÓN A SUPABASE ---
         let listaBitacoras = [];
         const modal = document.getElementById('modalBitacora');
         const modalTitulo = document.getElementById('modalTitulo');
         const modalContenido = document.getElementById('modalContenido');
         const btnCerrar = document.getElementById('btnCerrarModal');
 
-        // Conexión oficial con Supabase
         const supabaseUrl = 'https://fdblmxeobrgzopcnjipf.supabase.co'; 
         const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZkYmxteGVvYnJnem9wY25qaXBmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk4NzM3NjEsImV4cCI6MjA5NTQ0OTc2MX0.2S_LO9ppd4QjYYChRvKxH9i8w1XRUARhEiWOJC-z6AU'; 
 
-        // Esto sobreescribe la variable con la conexión activa perfectamente:
         const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
 
-        // Traer datos de la tabla 'bitacoras' en Supabase de forma dinámica
+        // OBTENER FRASE DEL DÍA DESDE BASE DE DATOS
+        async function obtenerFraseDelDia() {
+            const { data, error } = await supabase.from('frases_dia').select('*').eq('id', 1).single();
+            if (!error && data) {
+                document.getElementById('txt-frase').innerText = `"${data.texto}"`;
+                document.getElementById('txt-autor').innerText = data.autor;
+            } else {
+                console.error("Error al traer la frase:", error);
+            }
+        }
+
+        // TRAER BITÁCORAS
         async function obtenerBitacorasDesdeBaseDeDatos() {
             const { data, error } = await supabase.from('bitacoras').select('*').order('id', { ascending: false });
             
             if (error) {
-                console.error('Error al cargar las bitácoras desde Supabase:', error);
+                console.error('Error al cargar las bitácoras:', error);
                 return;
             }
 
@@ -520,7 +543,6 @@
                 return;
             }
 
-            // Pintar las tarjetas con los datos de la BD
             contenedor.innerHTML = data.map((bitacora, index) => `
                 <div class="card">
                     <h3>${bitacora.titulo}</h3>
@@ -529,7 +551,6 @@
                 </div>
             `).join('');
 
-            // Asignar los eventos de click para abrir el modal
             document.querySelectorAll('.btn-leer').forEach(boton => {
                 boton.addEventListener('click', (e) => {
                     const id = e.target.getAttribute('data-id');
@@ -548,7 +569,8 @@
         btnCerrar.addEventListener('click', () => { modal.classList.remove('active'); });
         modal.addEventListener('click', (e) => { if (e.target === modal) modal.classList.remove('active'); });
 
-        // Ejecutar la carga automática al entrar a la web
+        // Cargar todo al iniciar
+        obtenerFraseDelDia();
         obtenerBitacorasDesdeBaseDeDatos();
     </script>
 </body>
