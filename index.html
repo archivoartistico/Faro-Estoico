@@ -527,5 +527,20 @@
             }
         });
     </script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <script>
+        // Reemplaza esto con el ID de proyecto que buscas en tu panel
+        const supabaseUrl = 'https://fdblmxeobrgzopcnjipf.supabase.co'; 
+        
+        // Aquí pegas la clave "anon public" larga que tenías en el bloc de notas
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZkYmxteGVvYnJnem9wY25qaXBmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk4NzM3NjEsImV4cCI6MjA5NTQ0OTc2MX0.2S_LO9ppd4QjYYChRvKxH9i8w1XRUARhEiWOJC-z6AU'; 
+        
+        // Inicializamos el cliente de Supabase
+        const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+
+        console.log("Supabase conectado correctamente:", supabase);
+    </script>
+</body>
 </body>
 </html>

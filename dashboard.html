@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Faro Estoico - Dashboard</title>
+    <!-- CDN de Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        :root { --primary: #2c3e50; --accent: #d4af37; --light: #f4f4f4; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--light); margin: 0; padding: 20px; }
+        .container { max-width: 800px; margin: 0 auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .hidden { display: none !important; }
+        input, textarea, button { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; }
+        button { background: var(--primary); color: white; border: none; cursor: pointer; font-weight: bold; }
+        button:hover { background: #1a252f; }
+        .logout-btn { background: #e74c3c; width: auto; float: right; }
+        .reflexion-item { background: #f9f9f9; padding: 15px; margin: 10px 0; border-left: 4px solid var(--accent); }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <!-- 1. SECCIÓN DE LOGIN -->
+    <div id="login-section">
+        <h2>🔑 Acceso al Faro Estoico</h2>
+        <form id="login-form">
+            <input type="email" id="email" placeholder="Correo electrónico" required>
+            <input type="password" id="password" placeholder="Contraseña" required>
+            <button type="submit">Ingresar al Panel</button>
+        </form>
+    </div>
+
+    <!-- 2. SECCIÓN DEL DASHBOARD (PROTEGIDO) -->
+    <div id="dashboard-section" class="hidden">
+        <button class="logout-btn" id="btn-logout">Cerrar Sesión</button>
+        <h2>🏛️ Panel de Gestión Estoica</h2>
+        <p>Bienvenido al administrador de contenidos.</p>
+        
+        <hr>
+        
+        <h3>Agregar Nueva Reflexión</h3>
+        <form id="content-form">
+            <input type="text" id="autor" placeholder="Autor (ej. Marco Aurelio)" required>
+            <textarea id="contenido" rows="4" placeholder="Escribe la cita o reflexión aquí..." required></textarea>
+            <button type="submit">Publicar en el Faro</button>
+        </form>
+
+        <h3>Reflexiones Actuales</h3>
+        <div id="lista-reflexiones"></div>
+    </div>
+</div>
+
+<script>
+    // Configuración de Supabase (Reemplaza con tus credenciales de Supabase)
+    const SUPABASE_URL = "TU_SUPABASE_URL";
+    const SUPABASE_ANON_KEY = "TU_SUPABASE_ANON_KEY";
+    const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    // Elementos del DOM
+    const loginSection = document.getElementById('login-section');
+    const dashboardSection = document.getElementById('dashboard-section');
+    const loginForm = document.getElementById('login-form');
+    const contentForm = document.getElementById('content-form');
+    const listaReflexiones = document.getElementById('lista-reflexiones');
+    const btnLogout = document.getElementById('btn-logout');
+
+    // Comprobar estado de la sesión al cargar la página
+    supabase.auth.onAuthStateChange((event, session) => {
+        if (session) {
+            loginSection.classList.add('hidden');
+            dashboardSection.classList.remove('hidden');
+            cargarReflexiones();
+        } else {
+            loginSection.classList.remove('hidden');
+            dashboardSection.classList.add('hidden');
+        }
+    });
+
+    // Manejar el Inicio de Sesión
+    loginForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+
+        const { error } = await supabase.auth.signInWithPassword({ email, password });
+        if (error) alert("Error de autenticación: " + error.message);
+    });
+
+    // Manejar Cierre de Sesión
+    btnLogout.addEventListener('click', async () => {
+        await supabase.auth.signOut();
+    });
+
+    // Insertar nueva reflexión en la Base de Datos
+    contentForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const autor = document.getElementById('autor').value;
+        const contenido = document.getElementById('contenido').value;
+
+        const { error } = await supabase.from('reflexiones').insert([{ autor, contenido }]);
+        
+        if (error) {
+            alert("Error al guardar: " + error.message);
+        } else {
+            alert("Reflexión guardada con éxito");
+            contentForm.reset();
+            cargarReflexiones();
+        }
+    });
+
+    // Cargar y mostrar reflexiones
+    async function cargarReflexiones() {
+        const { data, error } = await supabase.from('reflexiones').select('*').order('fecha_creacion', { ascending: false });
+        if (error) return console.error(error);
+        
+        listaReflexiones.innerHTML = '';
+        data.forEach(item => {
+            listaReflexiones.innerHTML += `
+                <div class="reflexion-item">
+                    <strong>${item.autor}</strong>
+                    <p>"${item.contenido}"</p>
+                </div>
+            `;
+        });
+    }
+</script>
+</body>
+</html>
