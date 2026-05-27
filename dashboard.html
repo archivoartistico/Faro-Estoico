@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Faro Estoico - Dashboard de Gestión</title>
+    <title>Faro Estoico - Panel de Control</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         :root { 
@@ -19,15 +19,19 @@
             margin: 0; 
             padding: 20px; 
             color: var(--dark);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
         }
         .container { 
             max-width: 750px; 
-            margin: 40px auto; 
+            margin: auto; 
             background: white; 
             padding: 40px; 
             border-radius: 16px; 
             box-shadow: 0 10px 30px rgba(0,0,0,0.05); 
             border: 1px solid #ddd;
+            width: 100%;
         }
         .hidden { display: none !important; }
         
@@ -116,19 +120,39 @@
         
         .btn-edit { background: #f39c12; color: white; padding: 6px 12px; width: auto; font-size: 0.85rem; margin: 0; }
         .btn-delete { background: var(--danger); color: white; padding: 6px 12px; width: auto; font-size: 0.85rem; margin: 0; }
-        .btn-edit:hover { background: #d35400; }
-        .btn-delete:hover { background: #c0392b; }
-
+        
         .cancel-edit { background: #95a5a6; color: white; margin-top: 5px; }
-        .cancel-edit:hover { background: #7f8c8d; }
+
+        /* FOOTER DE ENTRADA SECRETA */
+        footer {
+            margin-top: auto;
+            text-align: center;
+            padding: 20px 0;
+        }
+        .secret-link {
+            color: #bbb;
+            font-size: 0.75rem;
+            letter-spacing: 1px;
+            text-decoration: none;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+        .secret-link:hover {
+            color: #888;
+        }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <div id="authSection">
+
+    <div id="esperaSection" style="text-align: center; padding: 40px 0;">
+        <p style="color: #888; font-style: italic; font-size: 1.1rem;">"La tranquilidad viene cuando dejas de preocuparte por lo que dicen, hacen o piensan los demás."</p>
+    </div>
+
+    <div id="authSection" class="hidden">
         <h2>Panel de Acceso Privado</h2>
-        <p style="color: #666; margin-bottom: 25px;">Por seguridad, debes iniciar sesión para gestionar las bitácoras.</p>
+        <p style="color: #666; margin-bottom: 25px;">Introduce tus credenciales de administrador para continuar.</p>
         <form id="loginForm">
             <label for="email">Correo Electrónico</label>
             <input type="email" id="email" placeholder="tu-correo@ejemplo.com" required>
@@ -194,6 +218,10 @@
     </div>
 </div>
 
+<footer>
+    <span class="secret-link" onclick="revelarLogin()">Gestión</span>
+</footer>
+
 <script>
     const supabaseUrl = 'https://fdblmxeobrgzopcnjipf.supabase.co'; 
     const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZkYmxteGVvYnJnem9wY25qaXBmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk4NzM3NjEsImV4cCI6MjA5NTQ0OTc2MX0.2S_LO9ppd4QjYYChRvKxH9i8w1XRUARhEiWOJC-z6AU'; 
@@ -201,6 +229,7 @@
     const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
 
     // Elementos del DOM
+    const esperaSection = document.getElementById('esperaSection');
     const authSection = document.getElementById('authSection');
     const dashboardSection = document.getElementById('dashboardSection');
     const loginForm = document.getElementById('loginForm');
@@ -211,15 +240,27 @@
 
     let bitacorasLocales = [];
 
+    // Función para activar la "puerta trasera"
+    function revelarLogin() {
+        // Solo actúa si no estás logueado ya
+        if (dashboardSection.classList.contains('hidden')) {
+            esperaSection.classList.add('hidden');
+            authSection.classList.remove('hidden');
+        }
+    }
+
     // Comprobar estado de sesión
     supabase.auth.onAuthStateChange((event, session) => {
         if (session) {
+            esperaSection.classList.add('hidden');
             authSection.classList.add('hidden');
             dashboardSection.classList.remove('hidden');
             cargarBitacorasGestion();
             cargarFraseActualDashboard();
         } else {
-            authSection.classList.remove('hidden');
+            // Regresa al modo oculto/espera al cerrar sesión
+            esperaSection.classList.remove('hidden');
+            authSection.classList.add('hidden');
             dashboardSection.classList.add('hidden');
         }
     });
@@ -256,7 +297,6 @@
         const contenido = document.getElementById('contenido').value;
 
         if (idEdit) {
-            // MODO EDICIÓN: Actualizar registro existente
             const { error } = await supabase.from('bitacoras').update({ titulo, descripcion, contenido }).eq('id', idEdit);
             if (error) {
                 alert("Error al editar: " + error.message);
@@ -266,7 +306,6 @@
                 cambiarPestaña('editar');
             }
         } else {
-            // MODO CREACIÓN: Insertar nuevo
             const { error } = await supabase.from('bitacoras').insert([{ titulo, descripcion, contenido }]);
             if (error) {
                 alert("Error al guardar: " + error.message);
@@ -307,7 +346,6 @@
         });
     }
 
-    // Llevar datos al formulario para Editar
     function prepararEdicion(index) {
         const bitacora = bitacorasLocales[index];
         document.getElementById('edit-id').value = bitacora.id;
@@ -319,7 +357,6 @@
         document.getElementById('btn-submit-form').innerText = "Guardar Cambios";
         document.getElementById('btn-cancelar-edicion').classList.remove('hidden');
         
-        // Mover el foco a la pestaña de edición/creación
         document.querySelectorAll('.tab-pane').forEach(p => p.classList.add('hidden'));
         document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
         document.getElementById('pane-crear').classList.remove('hidden');
@@ -334,9 +371,8 @@
         document.getElementById('btn-cancelar-edicion').classList.add('hidden');
     }
 
-    // Eliminar Bitácora de la BD
     async function eliminarBitacora(id) {
-        if(confirm("¿Estás completamente seguro de borrar esta bitácora de forma permanente?")) {
+        if(confirm("¿Estás completamente seguro de borrar esta bitácora?")) {
             const { error } = await supabase.from('bitacoras').delete().eq('id', id);
             if (error) alert("Error al eliminar: " + error.message);
             else {
@@ -360,7 +396,6 @@
         const texto = document.getElementById('fraseTexto').value;
         const autor = document.getElementById('fraseAutor').value;
 
-        // Upsert / Update de la fila con ID 1
         const { error } = await supabase.from('frases_dia').upsert({ id: 1, texto, autor });
         if(error) {
             alert("Error al actualizar la frase: " + error.message);
