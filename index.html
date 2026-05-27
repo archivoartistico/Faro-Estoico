@@ -258,18 +258,6 @@
             gap: 12px;
             color: #555;
         }
-        /* Pestaña trasera casi invisible en la esquina del footer */
-        .puerta-trasera {
-            color: #e2dbd0; /* Un gris sumamente claro que se confunde con el fondo */
-            font-size: 0.75rem;
-            text-decoration: none;
-            cursor: default;
-            user-select: none;
-            transition: color 0.5s;
-        }
-        .puerta-trasera:hover {
-            color: #bbb; /* Solo se nota levemente si dejas el mouse encima adrede */
-        }
 
         /* WHATSAPP FLOAT */
         .whatsapp-float {
@@ -479,7 +467,7 @@
             </div>
             <div style="display: flex; justify-content: space-between; align-items: center;">
                 <span>Montevideo, Uruguay</span>
-                <a href="dashboard.html?acceso=secreto" class="puerta-trasera">Gestión</a>
+                <a href="dashboard.html" style="color: #bbb; font-size: 0.8rem; letter-spacing: 1px;">Gestión</a>
             </div>
         </div>
     </footer>
@@ -527,17 +515,25 @@
 
         const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
 
+        // OBTENER FRASE DEL DÍA DESDE BASE DE DATOS
         async function obtenerFraseDelDia() {
             const { data, error } = await supabase.from('frases_dia').select('*').eq('id', 1).single();
             if (!error && data) {
                 document.getElementById('txt-frase').innerText = `"${data.texto}"`;
                 document.getElementById('txt-autor').innerText = data.autor;
+            } else {
+                console.error("Error al traer la frase:", error);
             }
         }
 
+        // TRAER BITÁCORAS
         async function obtenerBitacorasDesdeBaseDeDatos() {
             const { data, error } = await supabase.from('bitacoras').select('*').order('id', { ascending: false });
-            if (error) return;
+            
+            if (error) {
+                console.error('Error al cargar las bitácoras:', error);
+                return;
+            }
 
             listaBitacoras = data;
             const contenedor = document.getElementById('contenedor-bitacoras');
@@ -573,6 +569,7 @@
         btnCerrar.addEventListener('click', () => { modal.classList.remove('active'); });
         modal.addEventListener('click', (e) => { if (e.target === modal) modal.classList.remove('active'); });
 
+        // Cargar todo al iniciar
         obtenerFraseDelDia();
         obtenerBitacorasDesdeBaseDeDatos();
     </script>

@@ -12,6 +12,7 @@
             --light: #f5f1ea; 
             --dark: #1d1d1d;
             --danger: #c0392b;
+            --success: #27ae60;
         }
         body { 
             font-family: 'Segoe UI', system-ui, sans-serif; 
@@ -19,357 +20,286 @@
             margin: 0; 
             padding: 20px; 
             color: var(--dark);
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
         }
         .container { 
-            max-width: 750px; 
-            margin: auto; 
+            max-width: 850px; 
+            margin: 40px auto; 
             background: white; 
             padding: 40px; 
             border-radius: 16px; 
             box-shadow: 0 10px 30px rgba(0,0,0,0.05); 
-            border: 1px solid #ddd;
-            width: 100%;
         }
-        .hidden { display: none !important; }
+        .header-panel {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid var(--light);
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+        h2 { margin: 0; font-family: system-ui; color: var(--primary); }
         
-        h2 { 
-            font-size: 2rem; 
-            margin-bottom: 20px; 
-            color: var(--primary);
-            border-bottom: 2px solid var(--accent);
-            padding-bottom: 10px;
-        }
-        
-        label {
-            font-weight: 600;
-            display: block;
-            margin-top: 15px;
-            color: #444;
-        }
-
-        input, textarea, button { 
-            width: 100%; 
-            padding: 12px; 
-            margin: 8px 0 16px 0; 
-            border: 1px solid #ccc; 
-            border-radius: 8px; 
-            box-sizing: border-box; 
-            font-size: 1rem;
-        }
-        
-        textarea { resize: vertical; min-height: 120px; }
-
-        button { 
-            background: var(--primary); 
-            color: white; 
-            border: none; 
-            cursor: pointer; 
-            font-weight: bold; 
-            transition: background 0.3s;
-        }
-        button:hover { background: #163a5f; }
-        
-        /* Sistema de pestañas */
-        .tabs-menu {
+        /* Sistema de Pestañas */
+        .tabs {
             display: flex;
             gap: 10px;
-            margin-bottom: 25px;
+            margin-bottom: 30px;
             border-bottom: 1px solid #ddd;
             padding-bottom: 10px;
         }
         .tab-btn {
-            background: #eef2f5;
-            color: var(--primary);
-            padding: 10px 18px;
-            border-radius: 6px;
+            background: none;
+            border: none;
+            padding: 10px 20px;
+            font-size: 1rem;
+            cursor: pointer;
             font-weight: 600;
-            font-size: 0.95rem;
-            width: auto;
-            margin: 0;
+            color: #777;
+            border-radius: 6px;
+            transition: all 0.3s;
         }
         .tab-btn.active {
             background: var(--primary);
             color: white;
         }
 
-        .logout-btn { 
-            background: #fff; 
-            color: var(--danger); 
-            border: 1px solid var(--danger); 
-            margin-top: 30px;
-        }
-        .logout-btn:hover { background: #fce4e4; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
 
-        /* Lista de gestión */
-        .bitacora-item-gestion {
-            padding: 15px;
-            border: 1px solid #eee;
-            border-radius: 8px;
-            margin-bottom: 12px;
-            background: #fafafa;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+        /* Formularios */
+        form { display: flex; flex-direction: column; gap: 15px; margin-bottom: 40px; }
+        label { font-weight: 600; font-size: 0.9rem; color: #555; }
+        input, textarea { 
+            padding: 12px; 
+            border: 1px solid #ddd; 
+            border-radius: 8px; 
+            font-size: 1rem; 
+            font-family: inherit;
         }
-        .bitacora-item-gestion h4 { margin: 0 0 5px 0; color: var(--primary); }
-        .bitacora-item-gestion p { margin: 0; color: #666; font-size: 0.9rem; }
-        .acciones-btn { display: flex; gap: 8px; }
+        textarea { resize: vertical; min-height: 100px; }
         
-        .btn-edit { background: #f39c12; color: white; padding: 6px 12px; width: auto; font-size: 0.85rem; margin: 0; }
-        .btn-delete { background: var(--danger); color: white; padding: 6px 12px; width: auto; font-size: 0.85rem; margin: 0; }
-        
-        .cancel-edit { background: #95a5a6; color: white; margin-top: 5px; }
+        .btn { 
+            padding: 12px 24px; 
+            border-radius: 8px; 
+            border: none; 
+            font-size: 1rem; 
+            font-weight: 600; 
+            cursor: pointer; 
+            transition: all 0.2s; 
+        }
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-primary:hover { opacity: 0.9; }
+        .btn-danger { background: var(--danger); color: white; }
+        .btn-secondary { background: #7f8c8d; color: white; margin-left: 10px; }
+        .btn-volver { background: transparent; border: 1px solid var(--primary); color: var(--primary); text-decoration: none; padding: 8px 16px; border-radius: 20px; font-size: 0.9rem; }
+        .btn-volver:hover { background: var(--primary); color: white; }
+
+        /* Lista de Gestión */
+        .item-gestion { 
+            background: #fafafa; 
+            padding: 20px; 
+            border-radius: 10px; 
+            margin-bottom: 15px; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            border: 1px solid #eee;
+        }
+        .item-info h4 { margin: 0 0 5px 0; font-size: 1.1rem; }
+        .item-info p { margin: 0; font-size: 0.9rem; color: #666; }
+        .actions { display: flex; gap: 10px; }
+        .btn-sm { padding: 6px 12px; font-size: 0.85rem; border-radius: 6px; }
+
+        .hidden { display: none; }
     </style>
 </head>
 <body>
 
-<div class="container">
-
-    <div id="camuflajeSection" style="text-align: center; padding: 40px 0;">
-        <p style="color: #888; font-style: italic; font-size: 1.1rem;">"La verdadera felicidad es disfrutar el presente sin dependencia ansiosa del futuro."</p>
-    </div>
-
-    <div id="authSection" class="hidden">
-        <h2>Panel de Acceso Privado</h2>
-        <p style="color: #666; margin-bottom: 25px;">Introduce tus credenciales de administrador para continuar.</p>
-        <form id="loginForm">
-            <label for="email">Correo Electrónico</label>
-            <input type="email" id="email" placeholder="tu-correo@ejemplo.com" required>
-            
-            <label for="password">Contraseña</label>
-            <input type="password" id="password" placeholder="••••••••" required>
-            
-            <button type="submit">Iniciar Sesión</button>
-        </form>
-    </div>
-
-    <div id="dashboardSection" class="hidden">
-        
-        <div class="tabs-menu">
-            <button class="tab-btn active" onclick="cambiarPestaña('crear')">Añadir Bitácora</button>
-            <button class="tab-btn" onclick="cambiarPestaña('editar')">Gestionar / Editar Bitácoras</button>
-            <button class="tab-btn" onclick="cambiarPestaña('frase')">Cambiar Frase del Día</button>
+    <div class="container">
+        <div class="header-panel">
+            <h2>Panel de Control Interior</h2>
+            <a href="index.html" class="btn-volver">← Volver al Faro</a>
         </div>
 
-        <div id="pane-crear" class="tab-pane">
-            <h2 id="form-title">Nueva Bitácora</h2>
-            <p style="color: #666; margin-bottom: 15px;">El contenido publicado aparecerá inmediatamente en la web principal.</p>
+        <div class="tabs">
+            <button class="tab-btn active" onclick="switchTab('bitacoras-tab')">Gestionar Bitácoras</button>
+            <button class="tab-btn" onclick="switchTab('frase-tab')">Frase Única del Día</button>
+        </div>
+
+        <div id="bitacoras-tab" class="tab-content active">
+            <h3 id="form-title">Nueva Bitácora</h3>
+            <form id="content-form">
+                <input type="hidden" id="edit-id">
+                
+                <label for="titulo">Título de la Reflexión</label>
+                <input type="text" id="titulo" placeholder="Ej: Sobre la brevedad de los días" required>
+                
+                <label for="descripcion">Breve Descripción (Vista previa en tarjetas)</label>
+                <input type="text" id="descripcion" placeholder="Ej: Una reflexión introspectiva sobre el tiempo." required>
+                
+                <label for="contenido">Contenido Completo (Se leerá en el Modal)</label>
+                <textarea id="contenido" placeholder="Escribe aquí toda tu bitácora desarrollado..." required></textarea>
+                
+                <div>
+                    <button type="submit" id="btn-submit-form" class="btn btn-primary">Publicar en la Web</button>
+                    <button type="button" id="btn-cancelar-edicion" class="btn btn-secondary hidden" onclick="resetearFormularioBitacora()">Cancelar Edición</button>
+                </div>
+            </form>
+
+            <h3>Tus Publicaciones Actuales</h3>
+            <div id="lista-gestion-bitacoras">
+                </div>
+        </div>
+
+        <div id="frase-tab" class="tab-content">
+            <h3>Actualizar Frase del Día</h3>
+            <p style="color:#666; font-size:0.9rem; margin-bottom:20px;">Nota: El sistema está configurado para que solo exista <strong>una sola frase activa</strong>. Cualquier cambio sobrescribirá la frase anterior en la web de forma automática.</p>
             
-            <form id="contentForm">
-                <input type="hidden" id="edit-id" value="">
+            <form id="frase-form">
+                <label for="fraseTexto">Cita Sabia</label>
+                <textarea id="fraseTexto" placeholder="No expliques tu filosofía. Encuéntrala." required></textarea>
                 
-                <label for="titulo">Título de la Bitácora</label>
-                <input type="text" id="titulo" placeholder="Ej: El silencio y la claridad" required>
+                <label for="fraseAutor">Autor / Filósofo</label>
+                <input type="text" id="fraseAutor" placeholder="Ej: Epicteto" required>
                 
-                <label for="descripcion">Breve Descripción (Aparece en la tarjeta inicial)</label>
-                <input type="text" id="descripcion" placeholder="Ej: Una reflexión sobre el exceso de estímulos..." required>
-                
-                <label for="contenido">Contenido Completo (Aparece dentro del modal)</label>
-                <textarea id="contenido" placeholder="Escribe aquí toda tu reflexión o artículo..." required></textarea>
-                
-                <button type="submit" id="btn-submit-form">Publicar en la Web</button>
-                <button type="button" id="btn-cancelar-edicion" class="cancel-edit hidden" onclick="limpiarFormularioEdicion()">Cancelar Edición</button>
+                <div>
+                    <button type="submit" class="btn btn-primary">Actualizar Frase Única</button>
+                </div>
             </form>
         </div>
-
-        <div id="pane-editar" class="tab-pane hidden">
-            <h2>Gestionar Bitácoras</h2>
-            <p style="color: #666; margin-bottom: 20px;">Busca la bitácora que deseas modificar o borrar de forma definitiva.</p>
-            <div id="listaGestion">Cargando tus bitácoras...</div>
-        </div>
-
-        <div id="pane-frase" class="tab-pane hidden">
-            <h2>Frase del Día</h2>
-            <p style="color: #666; margin-bottom: 20px;">Actualiza la cita estoica destacada que aparece en la parte superior del inicio.</p>
-            
-            <form id="fraseForm">
-                <label for="fraseTexto">Cita / Frase Estoica</label>
-                <textarea id="fraseTexto" placeholder="Ej: No pierdas más tiempo discutiendo qué debe ser un buen hombre. Sé uno." required></textarea>
-                
-                <label for="fraseAutor">Autor / Origen</label>
-                <input type="text" id="fraseAutor" placeholder="Ej: Marco Aurelio, Meditaciones" required>
-                
-                <button type="submit">Actualizar Frase del Día</button>
-            </form>
-        </div>
-
-        <button id="btnLogout" class="logout-btn">Cerrar Sesión Segura</button>
     </div>
-</div>
 
-<script>
-    const supabaseUrl = 'https://fdblmxeobrgzopcnjipf.supabase.co'; 
-    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZkYmxteGVvYnJnem9wY25qaXBmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk4NzM3NjEsImV4cCI6MjA5NTQ0OTc2MX0.2S_LO9ppd4QjYYChRvKxH9i8w1XRUARhEiWOJC-z6AU'; 
-    
-    const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+    <script>
+        // --- CONFIGURACIÓN DE SUPABASE ---
+        const SUPABASE_URL = "https://wzbcshbywbyyvofwclmd.supabase.co";
+        const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind6YmNzaGJ5d2J5eXZvZndjbG1kIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTY4Mzg2MDYsImV4cCI6MjAzMjQxNDYwNn0.Vb3w6V-fC-j59U2Hj2E_1L9gXp1Zl_K8_fU6z3l9078";
+        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    const camuflajeSection = document.getElementById('camuflajeSection');
-    const authSection = document.getElementById('authSection');
-    const dashboardSection = document.getElementById('dashboardSection');
-    const loginForm = document.getElementById('loginForm');
-    const contentForm = document.getElementById('contentForm');
-    const fraseForm = document.getElementById('fraseForm');
-    const btnLogout = document.getElementById('btnLogout');
-    const listaGestion = document.getElementById('listaGestion');
+        const contentForm = document.getElementById('content-form');
+        const fraseForm = document.getElementById('frase-form');
 
-    let bitacorasLocales = [];
-
-    // COMPROBAR PUERTA TRASERA AL CARGAR
-    const urlParams = new URLSearchParams(window.location.search);
-    const tieneAccesoSecreto = urlParams.get('acceso') === 'secreto';
-
-    // Comprobar estado de sesión en Supabase
-    supabase.auth.onAuthStateChange((event, session) => {
-        if (session) {
-            camuflajeSection.classList.add('hidden');
-            authSection.classList.add('hidden');
-            dashboardSection.classList.remove('hidden');
-            cargarBitacorasGestion();
-            cargarFraseActualDashboard();
-        } else {
-            // Si no está logueado, evaluamos si viene desde el enlace oculto del footer
-            if (tieneAccesoSecreto) {
-                camuflajeSection.classList.add('hidden');
-                authSection.classList.remove('hidden');
-            } else {
-                camuflajeSection.classList.remove('hidden');
-                authSection.classList.add('hidden');
-            }
-            dashboardSection.classList.add('hidden');
+        // --- SISTEMA NAVEGACIÓN PESTAÑAS ---
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            
+            document.getElementById(tabId).classList.add('active');
+            event.currentTarget.classList.add('active');
         }
-    });
 
-    // Iniciar Sesión
-    loginForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const email = document.getElementById('email').value.trim();
-        const password = document.getElementById('password').value;
-        const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-        if (error) alert("Error de credenciales: " + error.message);
-    });
-
-    // Cerrar Sesión
-    btnLogout.addEventListener('click', async () => { 
-        await supabase.auth.signOut(); 
-        // Al cerrar sesión, limpiamos la URL para volver al camuflaje completo
-        window.location.href = 'dashboard.html';
-    });
-
-    // PESTAÑAS
-    function cambiarPestaña(pestaña) {
-        document.querySelectorAll('.tab-pane').forEach(p => p.classList.add('hidden'));
-        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-        
-        document.getElementById(`pane-${pestaña}`).classList.remove('hidden');
-        event.currentTarget.classList.add('active');
-        
-        if (pestaña === 'editar') cargarBitacorasGestion();
-    }
-
-    // --- LOGICA DE BITÁCORAS ---
-    contentForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const idEdit = document.getElementById('edit-id').value;
-        const titulo = document.getElementById('titulo').value;
-        const descripcion = document.getElementById('descripcion').value;
-        const contenido = document.getElementById('contenido').value;
-
-        if (idEdit) {
-            const { error } = await supabase.from('bitacoras').update({ titulo, descripcion, contenido }).eq('id', idEdit);
-            if (error) alert("Error al editar: " + error.message);
-            else {
-                alert("¡Modificado correctamente!");
-                limpiarFormularioEdicion();
-                cambiarPestaña('editar');
+        // --- LÓGICA DE BITÁCORAS (AGREGAR / EDITAR / ELIMINAR) ---
+        async function cargarBitacorasGestion() {
+            const { data, error } = await supabase.from('bitacoras').select('*').order('created_at', { ascending: false });
+            const contenedor = document.getElementById('lista-gestion-bitacoras');
+            
+            if(error || !data || data.length === 0) {
+                contenedor.innerHTML = "<p style='color:#999;'>No hay bitácoras guardadas aún.</p>";
+                return;
             }
-        } else {
-            const { error } = await supabase.from('bitacoras').insert([{ titulo, descripcion, contenido }]);
-            if (error) alert("Error al guardar: " + error.message);
-            else {
-                alert("¡Publicado con éxito!");
-                contentForm.reset();
-            }
-        }
-        cargarBitacorasGestion();
-    });
 
-    async function cargarBitacorasGestion() {
-        const { data, error } = await supabase.from('bitacoras').select('*').order('id', { ascending: false });
-        if (error || !data || data.length === 0) {
-            listaGestion.innerHTML = '<em>No hay bitácoras disponibles para editar.</em>';
-            return;
-        }
-        bitacorasLocales = data;
-        listaGestion.innerHTML = '';
-        data.forEach((item, index) => {
-            listaGestion.innerHTML += `
-                <div class="bitacora-item-gestion">
-                    <div>
-                        <h4>${item.titulo}</h4>
-                        <p>${item.descripcion}</p>
+            contenedor.innerHTML = data.map(b => `
+                <div class="item-gestion">
+                    <div class="item-info">
+                        <h4>${b.titulo}</h4>
+                        <p>${b.descripcion}</p>
                     </div>
-                    <div class="acciones-btn">
-                        <button class="btn-edit" onclick="prepararEdicion(${index})">Editar</button>
-                        <button class="btn-delete" onclick="eliminarBitacora(${item.id})">Borrar</button>
+                    <div class="actions">
+                        <button class="btn btn-primary btn-sm" onclick="prepararEdicionBitacora('${b.id}', '${escapeJS(b.titulo)}', '${escapeJS(b.descripcion)}', '${escapeJS(b.contenido)}')">Editar</button>
+                        <button class="btn btn-danger btn-sm" onclick="eliminarBitacora('${b.id}')">Eliminar</button>
                     </div>
                 </div>
-            `;
+            `).join('');
+        }
+
+        contentForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const id = document.getElementById('edit-id').value;
+            const titulo = document.getElementById('titulo').value;
+            const descripcion = document.getElementById('descripcion').value;
+            const contenido = document.getElementById('contenido').value;
+
+            if(id) {
+                // Actualizar una existente
+                const { error } = await supabase.from('bitacoras').update({ titulo, descripcion, contenido }).eq('id', id);
+                if (error) alert(error.message);
+                else alert("¡Bitácora actualizada correctamente!");
+            } else {
+                // Insertar nueva
+                const { error } = await supabase.from('bitacoras').insert([{ titulo, descripcion, contenido }]);
+                if (error) alert(error.message);
+                else alert("¡Nueva bitácora agregada de forma exitosa!");
+            }
+
+            resetearFormularioBitacora();
+            cargarBitacorasGestion();
         });
-    }
 
-    function prepararEdicion(index) {
-        const bitacora = bitacorasLocales[index];
-        document.getElementById('edit-id').value = bitacora.id;
-        document.getElementById('titulo').value = bitacora.titulo;
-        document.getElementById('descripcion').value = bitacora.descripcion;
-        document.getElementById('contenido').value = bitacora.contenido;
-        
-        document.getElementById('form-title').innerText = "Modificar Bitácora";
-        document.getElementById('btn-submit-form').innerText = "Guardar Cambios";
-        document.getElementById('btn-cancelar-edicion').classList.remove('hidden');
-        
-        document.querySelectorAll('.tab-pane').forEach(p => p.classList.add('hidden'));
-        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-        document.getElementById('pane-crear').classList.remove('hidden');
-        document.querySelectorAll('.tab-btn')[0].classList.add('active');
-    }
-
-    function limpiarFormularioEdicion() {
-        document.getElementById('edit-id').value = "";
-        contentForm.reset();
-        document.getElementById('form-title').innerText = "Nueva Bitácora";
-        document.getElementById('btn-submit-form').innerText = "Publicar en la Web";
-        document.getElementById('btn-cancelar-edicion').classList.add('hidden');
-    }
-
-    async function eliminarBitacora(id) {
-        if(confirm("¿Seguro que quieres eliminar de forma definitiva esta bitácora?")) {
-            const { error } = await supabase.from('bitacoras').delete().eq('id', id);
-            if (error) alert(error.message);
-            else cargarBitacorasGestion();
+        function prepararEdicionBitacora(id, titulo, descripcion, contenido) {
+            document.getElementById('edit-id').value = id;
+            document.getElementById('titulo').value = unescapeJS(titulo);
+            document.getElementById('descripcion').value = unescapeJS(descripcion);
+            document.getElementById('contenido').value = unescapeJS(contenido);
+            
+            document.getElementById('form-title').innerText = "Editando Bitácora";
+            document.getElementById('btn-submit-form').innerText = "Guardar Cambios";
+            document.getElementById('btn-cancelar-edicion').classList.remove('hidden');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
-    }
 
-    // --- LOGICA DE LA FRASE ---
-    async function cargarFraseActualDashboard() {
-        const { data, error } = await supabase.from('frases_dia').select('*').eq('id', 1).single();
-        if(!error && data) {
-            document.getElementById('fraseTexto').value = data.texto;
-            document.getElementById('fraseAutor').value = data.autor;
+        function resetearFormularioBitacora() {
+            document.getElementById('edit-id').value = "";
+            contentForm.reset();
+            document.getElementById('form-title').innerText = "Nueva Bitácora";
+            document.getElementById('btn-submit-form').innerText = "Publicar en la Web";
+            document.getElementById('btn-cancelar-edicion').classList.add('hidden');
         }
-    }
 
-    fraseForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const texto = document.getElementById('fraseTexto').value;
-        const autor = document.getElementById('fraseAutor').value;
-        const { error } = await supabase.from('frases_dia').upsert({ id: 1, texto, autor });
-        if(error) alert(error.message);
-        else alert("¡Frase del día guardada correctamente!");
-    });
-</script>
+        async function eliminarBitacora(id) {
+            if(confirm("¿Estás completamente seguro de que deseas eliminar permanentemente esta bitácora?")) {
+                const { error } = await supabase.from('bitacoras').delete().eq('id', id);
+                if (error) alert(error.message);
+                else {
+                    alert("Bitácora eliminada.");
+                    cargarBitacorasGestion();
+                }
+            }
+        }
+
+        // --- LÓGICA DE LA FRASE DEL DÍA (SIEMPRE ID = 1) ---
+        async function cargarFraseActualDashboard() {
+            const { data, error } = await supabase.from('frases_dia').select('*').eq('id', 1).single();
+            if(!error && data) {
+                document.getElementById('fraseTexto').value = data.texto;
+                document.getElementById('fraseAutor').value = data.autor;
+            }
+        }
+
+        fraseForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const texto = document.getElementById('fraseTexto').value;
+            const autor = document.getElementById('fraseAutor').value;
+
+            // Al usar upsert forzando el id: 1, garantizamos que nunca se cree un segundo registro
+            const { error } = await supabase.from('frases_dia').upsert({ id: 1, texto, autor });
+            
+            if (error) {
+                alert("Error al guardar frase: " + error.message);
+            } else {
+                alert("¡Frase única del día actualizada con éxito!");
+            }
+        });
+
+        // Auxiliares para formatear strings con comillas de forma segura en JS inline
+        function escapeJS(str) {
+            return str.replace(/'/g, "\\'").replace(/"/g, '&quot;').replace(/\n/g, '\\n').replace(/\r/g, '\\r');
+        }
+        function unescapeJS(str) {
+            return str.replace(/\\'/g, "'").replace(/&quot;/g, '"').replace(/\\n/g, '\n').replace(/\\r/g, '\r');
+        }
+
+        // Carga inicial al cargar la página
+        cargarBitacorasGestion();
+        cargarFraseActualDashboard();
+    </script>
 </body>
 </html>
