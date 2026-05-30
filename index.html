@@ -514,14 +514,16 @@
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZkYmxteGVvYnJnem9wY25qaXBmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk4NzM3NjEsImV4cCI6MjA5NTQ0OTc2MX0.2S_LO9ppd4QjYYChRvKxH9i8w1XRUARhEiWOJC-z6AU';
         const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-        // OBTENER FRASE DEL DÍA DESDE BASE DE DATOS
+// OBTENER FRASE DEL DÍA DESDE BASE DE DATOS
         async function obtenerFraseDelDia() {
-            const { data, error } = await sb.from('frases_dia').select('*').eq('id', 1).single();
+            const { data, error } = await sb.from('frases_dia').select('*').eq('id', 1).maybeSingle();
             if (!error && data) {
                 document.getElementById('txt-frase').innerText = `"${data.texto}"`;
                 document.getElementById('txt-autor').innerText = data.autor;
             } else {
-                console.error("Error al traer la frase:", error);
+                document.getElementById('txt-frase').innerText = `"No expliques tu filosofía. Encuéntrala."`;
+                document.getElementById('txt-autor').innerText = "Epicteto";
+                console.log("No hay frase configurada en ID 1, mostrando frase por defecto.");
             }
         }
 

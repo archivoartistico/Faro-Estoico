@@ -265,7 +265,7 @@ async function cerrarSesion() {
             }
         }
 
-        // --- LÓGICA DE BITÁCORAS ---
+// --- LÓGICA DE BITÁCORAS ---
         async function cargarBitacorasGestion() {
             const { data, error } = await supabaseClient.from('bitacoras').select('*').order('id', { ascending: false });
             const contenedor = document.getElementById('lista-gestion-bitacoras');
@@ -297,16 +297,25 @@ async function cerrarSesion() {
             const contenido = document.getElementById('contenido').value;
 
             if(id) {
+                // Actualizar bitácora existente
                 const { error } = await supabaseClient.from('bitacoras').update({ titulo, descripcion, contenido }).eq('id', id);
-                if (error) alert(error.message);
-                else alert("¡Bitácora actualizada correctamente!");
+                if (error) {
+                    alert("Error al actualizar: " + error.message);
+                } else {
+                    alert("¡Bitácora actualizada correctamente!");
+                    resetearFormularioBitacora();
+                }
             } else {
+                // Insertar nueva bitácora
                 const { error } = await supabaseClient.from('bitacoras').insert([{ titulo, descripcion, contenido }]);
-                if (error) alert(error.message);
-                else alert("¡Nueva bitácora agregada de forma exitosa!");
+                if (error) {
+                    alert("Error al guardar: " + error.message);
+                } else {
+                    alert("¡Nueva bitácora agregada de forma exitosa!");
+                    resetearFormularioBitacora();
+                }
             }
 
-            resetearFormularioBitacora();
             cargarBitacorasGestion();
         });
 
@@ -340,13 +349,20 @@ async function cerrarSesion() {
                 }
             }
         }
-
-        // --- LÓGICA DE LA FRASE DEL DÍA ---
+            if(confirm("¿Estás completamente seguro de que deseas eliminar permanentemente esta bitácora?")) {
+                const { error } = await supabaseClient.from('bitacoras').delete().eq('id', id);
+                if (error) alert(error.message);
+                else {
+                    alert("Bitácora eliminada.");
+                    cargarBitacorasGestion();
+                }
+            }
+// --- LÓGICA DE LA FRASE DEL DÍA ---
         async function cargarFraseActualDashboard() {
-            const { data, error } = await supabaseClient.from('frases_dia').select('*').eq('id', 1).single();
+            const { data, error } = await supabaseClient.from('frases_dia').select('*').eq('id', 1).maybeSingle();
             if(!error && data) {
-                document.getElementById('fraseTexto').value = data.texto;
-                document.getElementById('fraseAutor').value = data.autor;
+                document.getElementById('fraseTexto').value = data.texto || '';
+                document.getElementById('fraseAutor').value = data.autor || '';
             }
         }
 
@@ -355,15 +371,16 @@ async function cerrarSesion() {
             const texto = document.getElementById('fraseTexto').value;
             const autor = document.getElementById('fraseAutor').value;
 
-            const { error } = await supabaseClient.from('frases_dia').upsert({ id: 1, texto, autor });
+            // Forzamos el ID 1 para actualizar siempre la misma fila
+            const { error } = await supabaseClient.from('frases_dia').upsert({ id: 1, texto: texto, autor: autor });
             
             if (error) {
                 alert("Error al guardar frase: " + error.message);
             } else {
                 alert("¡Frase única del día actualizada con éxito!");
+                cargarFraseActualDashboard();
             }
         });
-
         function escapeJS(str) {
             return str.replace(/'/g, "\\'").replace(/"/g, '&quot;').replace(/\n/g, '\\n').replace(/\r/g, '\\r');
         }
