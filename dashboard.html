@@ -395,7 +395,7 @@ fraseForm.addEventListener('submit', async (e) => {
             }
         });
 
-        // --- FUNCIONES AUXILIARES DE LIMPIEZA DE TEXTO ---
+        // --- FUNCIONES AUXILIARES DE LIMPIEZA DE TEXTO (CORREGIDAS CONTRA NULOS) ---
         function escapeJS(str) {
             if (!str) return '';
             return str.replace(/'/g, "\\'").replace(/"/g, '&quot;').replace(/\n/g, '\\n').replace(/\r/g, '\\r');
@@ -406,18 +406,12 @@ fraseForm.addEventListener('submit', async (e) => {
             return str.replace(/\\'/g, "'").replace(/&quot;/g, '"').replace(/\\n/g, '\n').replace(/\\r/g, '\r');
         }
 
-        // --- INICIALIZACIÓN DE LA PÁGINA AL CARGAR ---
-        async function inicializarDashboard() {
-            try {
-                // Ejecuta la función nativa que verifica si el usuario ya estaba logueado
-                await verificarSesion(); 
-            } catch (error) {
-                console.error("Error al verificar sesión inicial:", error);
-            }
-        }
-
-        // Ejecutamos la inicialización asíncrona de forma segura
-        inicializarDashboard();
+        // --- DISPARADOR DE INICIALIZACIÓN SEGURO ---
+        document.addEventListener('DOMContentLoaded', () => {
+            verificarSesion().catch(error => {
+                console.error("Error al iniciar sesión de forma segura:", error);
+            });
+        });
     </script>
 </body>
 </html>
