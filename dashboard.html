@@ -212,201 +212,6 @@
         const loginForm = document.getElementById('login-form');
 
         // --- AUTENTICACIÓN LOCAL DIRECTA ---
-async function verificarSesion() {
-
-    const {
-        data: { session }
-    } = await supabaseClient.auth.getSession();
-
-    if (session) {
-
-        document.getElementById('login-screen').classList.add('hidden');
-        document.getElementById('dashboard-screen').classList.remove('hidden');
-
-        cargarBitacorasGestion();
-        cargarFraseActualDashboard();
-
-    } else {
-
-        document.getElementById('login-screen').classList.remove('hidden');
-        document.getElementById('dashboard-screen').classList.add('hidden');
-
-    }
-}
-
-loginForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-
-            const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
-
-            if (error) {
-                alert("Error de autenticación: " + error.message);
-            } else if (data.user) {
-                // 1. Ocultar login y mostrar panel de forma inmediata
-                loginForm.style.display = 'none';
-                panelControl.classList.remove('hidden');
-
-                // 2. Cargar los datos de forma segura sin bloquear la interfaz
-                try {
-                    await cargarBitacorasGestion();
-                } catch (err) {
-                    console.error("Error al cargar bitácoras:", err);
-                }
-
-                try {
-                    await cargarFraseActualDashboard();
-                } catch (err) {
-                    console.error("Error al cargar la frase del día:", err);
-                }
-            }
-        });
-
-async function cerrarSesion() {
-    await supabaseClient.auth.signOut();
-    window.location.reload();
-}
-        // --- SISTEMA NAVEGACIÓN PESTAÑAS ---
-        function switchTab(tabId) {
-            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
-            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-            
-            document.getElementById(tabId).classList.add('active');
-            
-            if (window.event && window.event.currentTarget) {
-                window.event.currentTarget.classList.add('active');
-            }
-        }
-
-// --- LÓGICA DE BITÁCORAS ---
-        async function cargarBitacorasGestion() {
-            const { data, error } = await supabaseClient.from('bitacoras').select('*').order('id', { ascending: false });
-            const contenedor = document.getElementById('lista-gestion-bitacoras');
-            
-            if(error || !data || data.length === 0) {
-                contenedor.innerHTML = "<p style='color:#999;'>No hay bitácoras guardadas aún.</p>";
-                return;
-            }
-
-            contenedor.innerHTML = data.map(b => `
-                <div class="item-gestion">
-                    <div class="item-info">
-                        <h4>${b.titulo}</h4>
-                        <p>${b.descripcion}</p>
-                    </div>
-                    <div class="actions">
-                        <button class="btn btn-primary btn-sm" onclick="prepararEdicionBitacora('${b.id}', '${escapeJS(b.titulo)}', '${escapeJS(b.descripcion)}', '${escapeJS(b.contenido)}')">Editar</button>
-                        <button class="btn btn-danger btn-sm" onclick="eliminarBitacora('${b.id}')">Eliminar</button>
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        contentForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const id = document.getElementById('edit-id').value;
-            const titulo = document.getElementById('titulo').value;
-            const descripcion = document.getElementById('descripcion').value;
-            const contenido = document.getElementById('contenido').value;
-
-            if(id) {
-                // Actualizar bitácora existente
-                const { error } = await supabaseClient.from('bitacoras').update({ titulo, descripcion, contenido }).eq('id', id);
-                if (error) {
-                    alert("Error al actualizar: " + error.message);
-                } else {
-                    alert("¡Bitácora actualizada correctamente!");
-                    resetearFormularioBitacora();
-                }
-            } else {
-                // Insertar nueva bitácora
-                const { error } = await supabaseClient.from('bitacoras').insert([{ titulo, descripcion, contenido }]);
-                if (error) {
-                    alert("Error al guardar: " + error.message);
-                } else {
-                    alert("¡Nueva bitácora agregada de forma exitosa!");
-                    resetearFormularioBitacora();
-                }
-            }
-
-            cargarBitacorasGestion();
-        });
-
-        function prepararEdicionBitacora(id, titulo, descripcion, contenido) {
-            document.getElementById('edit-id').value = id;
-            document.getElementById('titulo').value = unescapeJS(titulo);
-            document.getElementById('descripcion').value = unescapeJS(descripcion);
-            document.getElementById('contenido').value = unescapeJS(contenido);
-            
-            document.getElementById('form-title').innerText = "Editando Bitácora";
-            document.getElementById('btn-submit-form').innerText = "Guardar Cambios";
-            document.getElementById('btn-cancelar-edicion').classList.remove('hidden');
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-
-        function resetearFormularioBitacora() {
-            document.getElementById('edit-id').value = "";
-            contentForm.reset();
-            document.getElementById('form-title').innerText = "Nueva Bitácora";
-            document.getElementById('btn-submit-form').innerText = "Publicar en la Web";
-            document.getElementById('btn-cancelar-edicion').classList.add('hidden');
-        }
-
-        async function eliminarBitacora(id) {
-            if(confirm("¿Estás completamente seguro de que deseas eliminar permanentemente esta bitácora?")) {
-                const { error } = await supabaseClient.from('bitacoras').delete().eq('id', id);
-                if (error) alert(error.message);
-                else {
-                    alert("Bitácora eliminada.");
-                    cargarBitacorasGestion();
-                }
-            }
-        }
-            if(confirm("¿Estás completamente seguro de que deseas eliminar permanentemente esta bitácora?")) {
-                const { error } = await supabaseClient.from('bitacoras').delete().eq('id', id);
-                if (error) alert(error.message);
-                else {
-                    alert("Bitácora eliminada.");
-                    cargarBitacorasGestion();
-                }
-            }
-// --- LÓGICA DE LA FRASE DEL DÍA ---
-        async function cargarFraseActualDashboard() {
-            const { data, error } = await supabaseClient.from('frases_dia').select('*').eq('id', 1).maybeSingle();
-            if(!error && data) {
-                document.getElementById('fraseTexto').value = data.texto || '';
-                document.getElementById('fraseAutor').value = data.autor || '';
-            }
-        }
-fraseForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const texto = document.getElementById('fraseTexto').value;
-            const autor = document.getElementById('fraseAutor').value;
-
-            // Forzamos el ID 1 para actualizar siempre la misma fila
-            const { error } = await supabaseClient.from('frases_dia').upsert({ id: 1, texto: texto, autor: autor });
-            
-            if (error) {
-                alert("Error al guardar frase: " + error.message);
-            } else {
-                alert("¡Frase única del día actualizada con éxito!");
-                cargarFraseActualDashboard();
-            }
-        });
-
-        // --- FUNCIONES AUXILIARES DE LIMPIEZA DE TEXTO (CORREGIDAS CONTRA NULOS) ---
-        function escapeJS(str) {
-            if (!str) return '';
-            return str.replace(/'/g, "\\'").replace(/"/g, '&quot;').replace(/\n/g, '\\n').replace(/\r/g, '\\r');
-        }
-
-        function unescapeJS(str) {
-            if (!str) return '';
-            return str.replace(/\\'/g, "'").replace(/&quot;/g, '"').replace(/\\n/g, '\n').replace(/\\r/g, '\r');
-        }
-
-            // --- AUTENTICACIÓN LOCAL DIRECTA ---
         async function verificarSesion() {
             try {
                 const { data: { session } } = await supabaseClient.auth.getSession();
@@ -429,17 +234,18 @@ fraseForm.addEventListener('submit', async (e) => {
 
         loginForm.addEventListener('submit', async (e) => {
             e.preventDefault();
+            // CORREGIDO: IDs correctos según el HTML de login
             const email = document.getElementById('login-email').value;
             const password = document.getElementById('login-password').value;
-            
+
             const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
-            
+
             if (error) {
-                alert("Correo o contraseña incorrectos");
-                return;
+                alert("Error de autenticación: " + error.message);
+            } else if (data.user) {
+                // Actualiza el estado visual llamando a la verificación segura
+                await verificarSesion();
             }
-            
-            await verificarSesion();
         });
 
         async function cerrarSesion() {
@@ -495,16 +301,25 @@ fraseForm.addEventListener('submit', async (e) => {
             const contenido = document.getElementById('contenido').value;
 
             if(id) {
+                // Actualizar bitácora existente
                 const { error } = await supabaseClient.from('bitacoras').update({ titulo, descripcion, contenido }).eq('id', id);
-                if (error) alert(error.message);
-                else alert("¡Bitácora actualizada correctamente!");
+                if (error) {
+                    alert("Error al actualizar: " + error.message);
+                } else {
+                    alert("¡Bitácora actualizada correctamente!");
+                    resetearFormularioBitacora();
+                }
             } else {
+                // Insertar nueva bitácora
                 const { error } = await supabaseClient.from('bitacoras').insert([{ titulo, descripcion, contenido }]);
-                if (error) alert(error.message);
-                else alert("¡Nueva bitácora agregada de forma exitosa!");
+                if (error) {
+                    alert("Error al guardar: " + error.message);
+                } else {
+                    alert("¡Nueva bitácora agregada de forma exitosa!");
+                    resetearFormularioBitacora();
+                }
             }
 
-            resetearFormularioBitacora();
             await cargarBitacorasGestion();
         });
 
@@ -528,6 +343,7 @@ fraseForm.addEventListener('submit', async (e) => {
             document.getElementById('btn-cancelar-edicion').classList.add('hidden');
         }
 
+        // CORREGIDO: Removida la duplicación rota de la función eliminar
         async function eliminarBitacora(id) {
             if(confirm("¿Estás completamente seguro de que deseas eliminar permanentemente esta bitácora?")) {
                 const { error } = await supabaseClient.from('bitacoras').delete().eq('id', id);
@@ -554,10 +370,11 @@ fraseForm.addEventListener('submit', async (e) => {
 
         fraseForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-            const texto = document.getElementById('fraseTexto').value;
-            const autor = document.getElementById('fraseAutor').value;
+            const textValue = document.getElementById('fraseTexto').value;
+            const autorValue = document.getElementById('fraseAutor').value;
 
-            const { error } = await supabaseClient.from('frases_dia').upsert({ id: 1, texto, autor });
+            // Forzamos el ID 1 para actualizar siempre la misma fila
+            const { error } = await supabaseClient.from('frases_dia').upsert({ id: 1, texto: textValue, autor: autorValue });
             
             if (error) {
                 alert("Error al guardar frase: " + error.message);
@@ -567,12 +384,13 @@ fraseForm.addEventListener('submit', async (e) => {
             }
         });
 
-        // --- FUNCIONES AUXILIARES DE LIMPIEZA DE TEXTO ---
+        // --- FUNCIONES AUXILIARES DE LIMPIEZA DE TEXTO (CORREGIDAS CONTRA NULOS) ---
         function escapeJS(str) {
             if (!str) return '';
             return str.replace(/'/g, "\\'").replace(/"/g, '&quot;').replace(/\n/g, '\\n').replace(/\r/g, '\\r');
         }
 
+        // CORREGIDO: Se removió una llave de cierre fantasma que causaba errores
         function unescapeJS(str) {
             if (!str) return '';
             return str.replace(/\\'/g, "'").replace(/&quot;/g, '"').replace(/\\n/g, '\n').replace(/\\r/g, '\r');
