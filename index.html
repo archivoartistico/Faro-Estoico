@@ -528,7 +528,13 @@
 
         // TRAER BITÁCORAS
         async function obtenerBitacorasDesdeBaseDeDatos() {
-            const { data, error } = await supabase.from('bitacoras').select('*').order('id', { ascending: false });
+            const { data, error } = await supabase
+    .from('bitacoras')
+    .select('*')
+    .order('id', { ascending: false });
+
+console.log("DATOS:", data);
+console.log("ERROR:", error);
             
             if (error) {
                 console.error('Error al cargar las bitácoras:', error);
