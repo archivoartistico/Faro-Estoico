@@ -135,10 +135,10 @@
         <h3>Acceso al Faro Interior</h3>
         <form id="login-form">
             <label for="login-email" style="text-align: left;">Correo Electrónico</label>
-            <input type="email" id="login-email" placeholder="gabrielrios1882@gmail.com" required>
+            <input type="email" id="login-email" placeholder="Correo Electrónico" required>
             
             <label for="login-password" style="text-align: left;">Contraseña</label>
-            <input type="password" id="login-password" placeholder="••••••••" required>
+            <input type="password" id="login-password" placeholder="•••••••••••••••••" required>
             
             <button type="submit" class="btn btn-primary" style="margin-top: 10px;">Identificarse</button>
         </form>
@@ -156,7 +156,7 @@
 
         <div class="tabs">
             <button class="tab-btn active" onclick="switchTab('bitacoras-tab')">Gestionar Bitácoras</button>
-            <button class="tab-btn" onclick="switchTab('frase-tab')">Frase Única del Día</button>
+            <button class="tab-btn" onclick="switchTab('frase-tab')">Frase del Día</button>
         </div>
 
         <div id="bitacoras-tab" class="tab-content active">
@@ -188,7 +188,7 @@
             <p style="color:#666; font-size:0.9rem; margin-bottom:20px;">Nota: El sistema está configurado para que solo exista <strong>una sola frase activa</strong>. Cualquier cambio sobrescribirá la frase anterior en la web de forma automática.</p>
             
             <form id="frase-form">
-                <label for="fraseTexto">Cita Sabia</label>
+                <label for="fraseTexto">Cita del Día</label>
                 <textarea id="fraseTexto" placeholder="No expliques tu filosofía. Encuéntrala." required></textarea>
                 
                 <label for="fraseAutor">Autor / Filósofo</label>
@@ -212,8 +212,27 @@
         const loginForm = document.getElementById('login-form');
 
         // --- AUTENTICACIÓN LOCAL DIRECTA ---
-        function verificarSesion() {
-            const esAdministrador = localStorage.getItem('faro_logged_in') === 'true';
+async function verificarSesion() {
+
+    const {
+        data: { session }
+    } = await supabase.auth.getSession();
+
+    if (session) {
+
+        document.getElementById('login-screen').classList.add('hidden');
+        document.getElementById('dashboard-screen').classList.remove('hidden');
+
+        cargarBitacorasGestion();
+        cargarFraseActualDashboard();
+
+    } else {
+
+        document.getElementById('login-screen').classList.remove('hidden');
+        document.getElementById('dashboard-screen').classList.add('hidden');
+
+    }
+}
             
             if (esAdministrador) {
                 document.getElementById('login-screen').classList.add('hidden');
@@ -224,27 +243,26 @@
                 document.getElementById('login-screen').classList.remove('hidden');
                 document.getElementById('dashboard-screen').classList.add('hidden');
             }
-        }
 
-        loginForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            const email = document.getElementById('login-email').value;
-            const password = document.getElementById('login-password').value;
+loginForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const email = document.getElementById('login-email').value;
+    const password = document.getElementById('login-password').value;
+    const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password
+    });
+    if (error) {
+        alert("Correo o contraseña incorrectos");
+        return;
+    }
+    verificarSesion();
+});
 
-            // Validación inmediata e infalible
-            if (email === 'gabrielrios1882@gmail.com' && password === 'Impossible1882') {
-                localStorage.setItem('faro_logged_in', 'true');
-                verificarSesion();
-            } else {
-                alert("Credenciales incorrectas. Vuelve a verificar tu correo o tu contraseña.");
-            }
-        });
-
-        function cerrarSesion() {
-            localStorage.removeItem('faro_logged_in');
-            window.location.reload();
-        }
-
+async function cerrarSesion() {
+    await supabase.auth.signOut();
+    window.location.reload();
+}
         // --- SISTEMA NAVEGACIÓN PESTAÑAS ---
         function switchTab(tabId) {
             document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
