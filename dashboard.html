@@ -205,7 +205,7 @@
         // --- CONEXIÓN DIRECTA A TU BASE DE DATOS ---
         const SUPABASE_URL = "https://fdblmxeobrgzopcnjipf.supabase.co";
         const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZkYmxteGVvYnJnem9wY25qaXBmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk4NzM3NjEsImV4cCI6MjA5NTQ0OTc2MX0.2S_LO9ppd4QjYYChRvKxH9i8w1XRUARhEiWOJC-z6AU";
-        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
         const contentForm = document.getElementById('content-form');
         const fraseForm = document.getElementById('frase-form');
@@ -216,7 +216,7 @@ async function verificarSesion() {
 
     const {
         data: { session }
-    } = await supabase.auth.getSession();
+    } = await supabaseClient.auth.getSession();
 
     if (session) {
 
@@ -233,22 +233,12 @@ async function verificarSesion() {
 
     }
 }
-            
-            if (esAdministrador) {
-                document.getElementById('login-screen').classList.add('hidden');
-                document.getElementById('dashboard-screen').classList.remove('hidden');
-                cargarBitacorasGestion();
-                cargarFraseActualDashboard();
-            } else {
-                document.getElementById('login-screen').classList.remove('hidden');
-                document.getElementById('dashboard-screen').classList.add('hidden');
-            }
 
 loginForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     const email = document.getElementById('login-email').value;
     const password = document.getElementById('login-password').value;
-    const { data, error } = await supabase.auth.signInWithPassword({
+    const { data, error } = await supabaseClient.auth.signInWithPassword({
         email,
         password
     });
@@ -260,7 +250,7 @@ loginForm.addEventListener('submit', async (e) => {
 });
 
 async function cerrarSesion() {
-    await supabase.auth.signOut();
+    await supabaseClient.auth.signOut();
     window.location.reload();
 }
         // --- SISTEMA NAVEGACIÓN PESTAÑAS ---
@@ -277,7 +267,7 @@ async function cerrarSesion() {
 
         // --- LÓGICA DE BITÁCORAS ---
         async function cargarBitacorasGestion() {
-            const { data, error } = await supabase.from('bitacoras').select('*').order('id', { ascending: false });
+            const { data, error } = await supabaseClient.from('bitacoras').select('*').order('id', { ascending: false });
             const contenedor = document.getElementById('lista-gestion-bitacoras');
             
             if(error || !data || data.length === 0) {
@@ -307,11 +297,11 @@ async function cerrarSesion() {
             const contenido = document.getElementById('contenido').value;
 
             if(id) {
-                const { error } = await supabase.from('bitacoras').update({ titulo, descripcion, contenido }).eq('id', id);
+                const { error } = await supabaseClient.from('bitacoras').update({ titulo, descripcion, contenido }).eq('id', id);
                 if (error) alert(error.message);
                 else alert("¡Bitácora actualizada correctamente!");
             } else {
-                const { error } = await supabase.from('bitacoras').insert([{ titulo, descripcion, contenido }]);
+                const { error } = await supabaseClient.from('bitacoras').insert([{ titulo, descripcion, contenido }]);
                 if (error) alert(error.message);
                 else alert("¡Nueva bitácora agregada de forma exitosa!");
             }
@@ -342,7 +332,7 @@ async function cerrarSesion() {
 
         async function eliminarBitacora(id) {
             if(confirm("¿Estás completamente seguro de que deseas eliminar permanentemente esta bitácora?")) {
-                const { error } = await supabase.from('bitacoras').delete().eq('id', id);
+                const { error } = await supabaseClient.from('bitacoras').delete().eq('id', id);
                 if (error) alert(error.message);
                 else {
                     alert("Bitácora eliminada.");
@@ -353,7 +343,7 @@ async function cerrarSesion() {
 
         // --- LÓGICA DE LA FRASE DEL DÍA ---
         async function cargarFraseActualDashboard() {
-            const { data, error } = await supabase.from('frases_dia').select('*').eq('id', 1).single();
+            const { data, error } = await supabaseClient.from('frases_dia').select('*').eq('id', 1).single();
             if(!error && data) {
                 document.getElementById('fraseTexto').value = data.texto;
                 document.getElementById('fraseAutor').value = data.autor;
@@ -365,7 +355,7 @@ async function cerrarSesion() {
             const texto = document.getElementById('fraseTexto').value;
             const autor = document.getElementById('fraseAutor').value;
 
-            const { error } = await supabase.from('frases_dia').upsert({ id: 1, texto, autor });
+            const { error } = await supabaseClient.from('frases_dia').upsert({ id: 1, texto, autor });
             
             if (error) {
                 alert("Error al guardar frase: " + error.message);
