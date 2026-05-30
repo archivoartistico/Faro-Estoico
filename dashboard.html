@@ -235,19 +235,33 @@ async function verificarSesion() {
 }
 
 loginForm.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const email = document.getElementById('login-email').value;
-    const password = document.getElementById('login-password').value;
-    const { data, error } = await supabaseClient.auth.signInWithPassword({
-        email,
-        password
-    });
-    if (error) {
-        alert("Correo o contraseña incorrectos");
-        return;
-    }
-    verificarSesion();
-});
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
+
+            if (error) {
+                alert("Error de autenticación: " + error.message);
+            } else if (data.user) {
+                // 1. Ocultar login y mostrar panel de forma inmediata
+                loginForm.style.display = 'none';
+                panelControl.classList.remove('hidden');
+
+                // 2. Cargar los datos de forma segura sin bloquear la interfaz
+                try {
+                    await cargarBitacorasGestion();
+                } catch (err) {
+                    console.error("Error al cargar bitácoras:", err);
+                }
+
+                try {
+                    await cargarFraseActualDashboard();
+                } catch (err) {
+                    console.error("Error al cargar la frase del día:", err);
+                }
+            }
+        });
 
 async function cerrarSesion() {
     await supabaseClient.auth.signOut();
