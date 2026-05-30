@@ -200,7 +200,6 @@
             </form>
         </div>
     </div>
-
     <script>
         // --- CONEXIÓN DIRECTA A TU BASE DE DATOS ---
         const SUPABASE_URL = "https://fdblmxeobrgzopcnjipf.supabase.co";
@@ -220,7 +219,7 @@
                     document.getElementById('login-screen').classList.add('hidden');
                     document.getElementById('dashboard-screen').classList.remove('hidden');
 
-                    // Ejecutamos las cargas de datos de forma segura
+                    // Carga de datos asíncronos controlada
                     await cargarBitacorasGestion();
                     await cargarFraseActualDashboard();
                 } else {
@@ -234,7 +233,6 @@
 
         loginForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-            // CORREGIDO: IDs correctos según el HTML de login
             const email = document.getElementById('login-email').value;
             const password = document.getElementById('login-password').value;
 
@@ -243,14 +241,17 @@
             if (error) {
                 alert("Error de autenticación: " + error.message);
             } else if (data.user) {
-                // Actualiza el estado visual llamando a la verificación segura
                 await verificarSesion();
             }
         });
 
         async function cerrarSesion() {
-            await supabaseClient.auth.signOut();
-            window.location.reload();
+            try {
+                await supabaseClient.auth.signOut();
+                window.location.reload();
+            } catch (err) {
+                console.error("Error al cerrar sesión:", err);
+            }
         }
 
         // --- SISTEMA NAVEGACIÓN PESTAÑAS ---
@@ -301,25 +302,16 @@
             const contenido = document.getElementById('contenido').value;
 
             if(id) {
-                // Actualizar bitácora existente
                 const { error } = await supabaseClient.from('bitacoras').update({ titulo, descripcion, contenido }).eq('id', id);
-                if (error) {
-                    alert("Error al actualizar: " + error.message);
-                } else {
-                    alert("¡Bitácora actualizada correctamente!");
-                    resetearFormularioBitacora();
-                }
+                if (error) alert("Error al actualizar: " + error.message);
+                else alert("¡Bitácora actualizada correctamente!");
             } else {
-                // Insertar nueva bitácora
                 const { error } = await supabaseClient.from('bitacoras').insert([{ titulo, descripcion, contenido }]);
-                if (error) {
-                    alert("Error al guardar: " + error.message);
-                } else {
-                    alert("¡Nueva bitácora agregada de forma exitosa!");
-                    resetearFormularioBitacora();
-                }
+                if (error) alert("Error al guardar: " + error.message);
+                else alert("¡Nueva bitácora agregada de forma exitosa!");
             }
 
+            resetearFormularioBitacora();
             await cargarBitacorasGestion();
         });
 
@@ -343,7 +335,6 @@
             document.getElementById('btn-cancelar-edicion').classList.add('hidden');
         }
 
-        // CORREGIDO: Removida la duplicación rota de la función eliminar
         async function eliminarBitacora(id) {
             if(confirm("¿Estás completamente seguro de que deseas eliminar permanentemente esta bitácora?")) {
                 const { error } = await supabaseClient.from('bitacoras').delete().eq('id', id);
@@ -370,11 +361,10 @@
 
         fraseForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-            const textValue = document.getElementById('fraseTexto').value;
-            const autorValue = document.getElementById('fraseAutor').value;
+            const texto = document.getElementById('fraseTexto').value;
+            const autor = document.getElementById('fraseAutor').value;
 
-            // Forzamos el ID 1 para actualizar siempre la misma fila
-            const { error } = await supabaseClient.from('frases_dia').upsert({ id: 1, texto: textValue, autor: autorValue });
+            const { error } = await supabaseClient.from('frases_dia').upsert({ id: 1, texto, autor });
             
             if (error) {
                 alert("Error al guardar frase: " + error.message);
@@ -384,21 +374,20 @@
             }
         });
 
-        // --- FUNCIONES AUXILIARES DE LIMPIEZA DE TEXTO (CORREGIDAS CONTRA NULOS) ---
+        // --- FUNCIONES AUXILIARES DE LIMPIEZA DE TEXTO ---
         function escapeJS(str) {
             if (!str) return '';
             return str.replace(/'/g, "\\'").replace(/"/g, '&quot;').replace(/\n/g, '\\n').replace(/\r/g, '\\r');
         }
 
-        // CORREGIDO: Se removió una llave de cierre fantasma que causaba errores
         function unescapeJS(str) {
             if (!str) return '';
             return str.replace(/\\'/g, "'").replace(/&quot;/g, '"').replace(/\\n/g, '\n').replace(/\\r/g, '\r');
         }
 
-        // --- INICIALIZADOR SEGURO AL CARGAR LA PÁGINA ---
+        // --- INICIALIZADOR AL CARGAR LA PÁGINA ---
         document.addEventListener('DOMContentLoaded', () => {
-            verificarSesion().catch(err => console.error("Error inicial:", err));
+            verificarSesion().catch(err => console.error("Error inicial de sesión:", err));
         });
     </script>
 </body>
