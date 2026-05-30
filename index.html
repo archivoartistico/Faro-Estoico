@@ -510,14 +510,13 @@
         const modalContenido = document.getElementById('modalContenido');
         const btnCerrar = document.getElementById('btnCerrarModal');
 
-        const supabaseUrl = 'https://fdblmxeobrgzopcnjipf.supabase.co'; 
-        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZkYmxteGVvYnJnem9wY25qaXBmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk4NzM3NjEsImV4cCI6MjA5NTQ0OTc2MX0.2S_LO9ppd4QjYYChRvKxH9i8w1XRUARhEiWOJC-z6AU'; 
-
-        const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+        const SUPABASE_URL = 'https://fdblmxeobrgzopcnjipf.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZkYmxteGVvYnJnem9wY25qaXBmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk4NzM3NjEsImV4cCI6MjA5NTQ0OTc2MX0.2S_LO9ppd4QjYYChRvKxH9i8w1XRUARhEiWOJC-z6AU';
+        const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
         // OBTENER FRASE DEL DÍA DESDE BASE DE DATOS
         async function obtenerFraseDelDia() {
-            const { data, error } = await supabase.from('frases_dia').select('*').eq('id', 1).single();
+            const { data, error } = await sb.from('frases_dia').select('*').eq('id', 1).single();
             if (!error && data) {
                 document.getElementById('txt-frase').innerText = `"${data.texto}"`;
                 document.getElementById('txt-autor').innerText = data.autor;
@@ -528,7 +527,7 @@
 
         // TRAER BITÁCORAS
         async function obtenerBitacorasDesdeBaseDeDatos() {
-            const { data, error } = await supabase
+            const { data, error } = await sb
     .from('bitacoras')
     .select('*')
     .order('id', { ascending: false });
