@@ -379,8 +379,7 @@ async function cerrarSesion() {
                 document.getElementById('fraseAutor').value = data.autor || '';
             }
         }
-
-        fraseForm.addEventListener('submit', async (e) => {
+fraseForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             const texto = document.getElementById('fraseTexto').value;
             const autor = document.getElementById('fraseAutor').value;
@@ -395,10 +394,15 @@ async function cerrarSesion() {
                 cargarFraseActualDashboard();
             }
         });
+
+        // --- FUNCIONES AUXILIARES DE LIMPIEZA DE TEXTO (CORREGIDAS) ---
         function escapeJS(str) {
+            if (!str) return '';
             return str.replace(/'/g, "\\'").replace(/"/g, '&quot;').replace(/\n/g, '\\n').replace(/\r/g, '\\r');
         }
+
         function unescapeJS(str) {
+            if (!str) return '';
             return str.replace(/\\'/g, "'").replace(/&quot;/g, '"').replace(/\\n/g, '\n').replace(/\\r/g, '\r');
         }
 
