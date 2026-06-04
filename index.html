@@ -248,16 +248,39 @@
         }
 
         /* FOOTER */
-        footer {
-            padding: 60px 0;
-            border-top: 1px solid #ddd;
-        }
-        .footer-content {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            color: #555;
-        }
+footer {
+    padding: 60px 0;
+    border-top: 1px solid #ddd;
+}
+.footer-content {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    color: #555;
+}
+/* NUEVOS ESTILOS PARA LOS BOTONES DEL FOOTER */
+.footer-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 8px 0;
+}
+.btn-footer {
+    display: inline-block;
+    padding: 8px 16px;
+    border: 1px solid #0f2740;
+    border-radius: 999px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: #0f2740 !important; /* Fuerza el color azul oscuro */
+    background: transparent;
+    transition: all 0.3s ease;
+}
+.btn-footer:hover {
+    background: #0f2740;
+    color: #f5f1ea !important; /* Invierte el color al pasar el cursor */
+    transform: translateY(-2px); /* Un sutil efecto de elevación */
+}
 
         /* WHATSAPP FLOAT */
         .whatsapp-float {
@@ -457,19 +480,22 @@
     </section>
 
     <footer>
-        <div class="container footer-content">
-            <div>FARO ESTOICO</div>
-            <div>gabrielrios1882@gmail.com</div>
-            <div>
-                <a href="https://www.instagram.com/firme_enlatormenta?utm_source=qr&igsh=N2U0NTNqYTRvZHB6" target="_blank">Instagram</a> · 
-                <a href="https://open.spotify.com/show/6vqZwZgnO12WOCNQU6kpkC?si=62cdeba56fe34c6a" target="_blank">Spotify</a> · 
-                <a href="https://open.spotify.com/show/6p2aXCSrcYxpr9NpBl9ivT?si=ba076a311d624e2d" target="_blank">Santiago Z.</a>
-            </div>
-            <div style="display: flex; justify-content: space-between; align-items: center;">
-                <span>Montevideo, Uruguay</span>
-                <a href="dashboard.html" style="color: #bbb; font-size: 0.8rem; letter-spacing: 1px;">Gestión</a>
-            </div>
+    <div class="container footer-content">
+        <div style="font-weight: 700; color: #111; letter-spacing: 1px;">FARO ESTOICO</div>
+        <div>gabrielrios1882@gmail.com</div>
+        
+        <!-- Contenedor con los nuevos botones interactivos -->
+        <div class="footer-buttons">
+            <a href="https://www.instagram.com/firme_enlatormenta?utm_source=qr&igsh=N2U0NTNqYTRvZHB6" class="btn-footer" target="_blank">Instagram</a> 
+            <a href="https://open.spotify.com/show/6vqZwZgnO12WOCNQU6kpkC?si=62cdeba56fe34c6a" class="btn-footer" target="_blank">Spotify</a> 
+            <a href="https://open.spotify.com/show/6p2aXCSrcYxpr9NpBl9ivT?si=ba076a311d624e2d" class="btn-footer" target="_blank">Santiago Z.</a>
         </div>
+        
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px;">
+            <span>Montevideo, Uruguay</span>
+            <a href="dashboard.html" style="color: #bbb; font-size: 0.8rem; letter-spacing: 1px;">Gestión</a>
+        </div>
+    </div>
     </footer>
 
     <a href="https://chat.whatsapp.com/H4cfFd4T6HF8GLBGlWYW4z" class="whatsapp-float" target="_blank" aria-label="WhatsApp">
