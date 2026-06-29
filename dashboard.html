@@ -224,6 +224,7 @@
         const contentForm = document.getElementById('content-form');
         const fraseForm = document.getElementById('frase-form');
         const loginForm = document.getElementById('login-form');
+        let imagenBitacoraURL = "";
 
         // --- AUTENTICACIÓN LOCAL DIRECTA ---
         async function verificarSesion() {
@@ -410,6 +411,38 @@ const { error } = await supabaseClient
         }
 
         // --- INICIALIZADOR AL CARGAR LA PÁGINA ---
+        document
+    .getElementById("imagenBitacora")
+    .addEventListener("change", subirImagenBitacora);
+
+async function subirImagenBitacora(e) {
+    const archivo = e.target.files[0];
+
+    if (!archivo) return;
+
+    const nombre = Date.now() + "_" + archivo.name;
+
+    const { error } = await supabaseClient
+        .storage
+        .from("bitacoras")
+        .upload(nombre, archivo);
+
+    if (error) {
+        alert("Error al subir imagen: " + error.message);
+        return;
+    }
+
+    const { data } = supabaseClient
+        .storage
+        .from("bitacoras")
+        .getPublicUrl(nombre);
+
+    imagenBitacoraURL = data.publicUrl;
+
+    const img = document.getElementById("previewImagenBitacora");
+    img.src = imagenBitacoraURL;
+    img.style.display = "block";
+}
         document.addEventListener('DOMContentLoaded', () => {
             verificarSesion().catch(err => console.error("Error inicial de sesión:", err));
         });
