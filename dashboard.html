@@ -317,12 +317,27 @@
             const descripcion = document.getElementById('descripcion').value;
             const contenido = document.getElementById('contenido').value;
 
-            if(id) {
-                const { error } = await supabaseClient.from('bitacoras').update({ titulo, descripcion, contenido }).eq('id', id);
+if(id) {
+    const { error } = await supabaseClient
+        .from('bitacoras')
+        .update({
+            titulo,
+            descripcion,
+            contenido,
+            imagen: imagenBitacoraURL
+        })
+        .eq('id', id);
                 if (error) alert("Error al actualizar: " + error.message);
                 else alert("¡Bitácora actualizada correctamente!");
             } else {
-                const { error } = await supabaseClient.from('bitacoras').insert([{ titulo, descripcion, contenido }]);
+                const { error } = await supabaseClient
+    .from('bitacoras')
+    .insert([{
+        titulo,
+        descripcion,
+        contenido,
+        imagen: imagenBitacoraURL
+    }]);
                 if (error) alert("Error al guardar: " + error.message);
                 else alert("¡Nueva bitácora agregada de forma exitosa!");
             }
@@ -349,6 +364,9 @@
             document.getElementById('form-title').innerText = "Nueva Bitácora";
             document.getElementById('btn-submit-form').innerText = "Publicar en la Web";
             document.getElementById('btn-cancelar-edicion').classList.add('hidden');
+            imagenBitacoraURL = "";
+            document.getElementById("previewImagenBitacora").style.display = "none";
+            document.getElementById("previewImagenBitacora").src = "";
         }
 
         async function eliminarBitacora(id) {
