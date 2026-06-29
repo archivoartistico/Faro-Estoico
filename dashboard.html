@@ -192,11 +192,19 @@
                 <textarea id="fraseTexto" placeholder="No expliques tu filosofía. Encuéntrala." required></textarea>
                 
                 <label for="fraseAutor">Autor / Filósofo</label>
-                <input type="text" id="fraseAutor" placeholder="Ej: Epicteto" required>
-                
-                <div>
-                    <button type="submit" class="btn btn-primary">Actualizar Frase Única</button>
-                </div>
+<input type="text" id="fraseAutor" placeholder="Ej: Epicteto" required>
+
+<label for="fraseReflexion">Reflexión</label>
+<textarea
+    id="fraseReflexion"
+    placeholder="Escribe aquí una breve reflexión que acompañe la frase..."
+    rows="5"></textarea>
+
+<div>
+    <button type="submit" class="btn btn-primary">
+        Actualizar Frase Única
+    </button>
+</div>
             </form>
         </div>
     </div>
@@ -353,6 +361,7 @@
                 if(!error && data) {
                     document.getElementById('fraseTexto').value = data.texto || '';
                     document.getElementById('fraseAutor').value = data.autor || '';
+                    document.getElementById('fraseReflexion').value = data.reflexion || '';
                 }
             } catch (err) {
                 console.error("Error al cargar la frase:", err);
@@ -363,8 +372,16 @@
             e.preventDefault();
             const texto = document.getElementById('fraseTexto').value;
             const autor = document.getElementById('fraseAutor').value;
+            const reflexion = document.getElementById('fraseReflexion').value;
 
-            const { error } = await supabaseClient.from('frases_dia').upsert({ id: 1, texto, autor });
+const { error } = await supabaseClient
+.from('frases_dia')
+.upsert({
+    id: 1,
+    texto,
+    autor,
+    reflexion
+});
             
             if (error) {
                 alert("Error al guardar frase: " + error.message);
