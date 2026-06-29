@@ -379,12 +379,48 @@ footer {
             .frase-texto { font-size: 1.5rem; }
         }
         @media(max-width: 600px) {
-            .nav { flex-direction: column; gap: 16px; }
-            .menu { flex-wrap: wrap; justify-content: center; }
-            .hero { text-align: center; }
-            .buttons { justify-content: center; }
-            .logo-wrapper { justify-content: center; }
-        }
+    header {
+        position: static;
+    }
+
+    .nav {
+        flex-direction: column;
+        gap: 12px;
+        padding: 14px 0;
+    }
+
+    .menu {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 12px;
+    }
+
+    .hero {
+        text-align: center;
+        padding-top: 40px;
+        min-height: auto;
+    }
+
+    .hero h1 {
+        font-size: 2.8rem;
+        line-height: 1.05;
+        word-break: normal;
+        overflow-wrap: normal;
+    }
+
+    .hero p {
+        font-size: 1rem;
+        padding: 0 10px;
+    }
+
+    .buttons {
+        justify-content: center;
+    }
+
+    .logo-wrapper {
+        justify-content: center;
+    }
+}
     </style>
 </head>
 
