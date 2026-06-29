@@ -241,6 +241,14 @@
         .card:hover {
             transform: translateY(-5px);
         }
+        .bitacora-img {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+    border-radius: 14px;
+    margin-bottom: 20px;
+    display: block;
+}
         .card h3 {
             font-family: 'EB Garamond', serif;
             font-size: 1.6rem;
@@ -637,13 +645,21 @@ console.log("ERROR:", error);
                 return;
             }
 
-            contenedor.innerHTML = data.map((bitacora, index) => `
-                <div class="card">
-                    <h3>${bitacora.titulo}</h3>
-                    <p>${bitacora.descripcion}</p>
-                    <a class="btn-leer" data-id="${index}">Leer →</a>
-                </div>
-            `).join('');
+contenedor.innerHTML = data.map((bitacora, index) => `
+    <div class="card">
+        ${bitacora.imagen ? `
+            <img 
+                src="${bitacora.imagen}" 
+                alt="${bitacora.titulo}" 
+                class="bitacora-img"
+            >
+        ` : ""}
+
+        <h3>${bitacora.titulo}</h3>
+        <p>${bitacora.descripcion}</p>
+        <a class="btn-leer" data-id="${index}">Leer →</a>
+    </div>
+`).join('');
 
             document.querySelectorAll('.btn-leer').forEach(boton => {
                 boton.addEventListener('click', (e) => {
