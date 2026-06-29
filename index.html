@@ -717,14 +717,6 @@ console.log("ERROR:", error);
 
 contenedor.innerHTML = data.map((bitacora, index) => `
     <div class="card">
-        ${bitacora.imagen ? `
-            <img 
-                src="${bitacora.imagen}" 
-                alt="${bitacora.titulo}" 
-                class="bitacora-img"
-            >
-        ` : ""}
-
         <h3>${bitacora.titulo}</h3>
         <p>${bitacora.descripcion}</p>
         <a class="btn-leer" data-id="${index}">Leer →</a>
