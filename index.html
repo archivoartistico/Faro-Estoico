@@ -263,34 +263,45 @@
             font-weight: 600;
             cursor: pointer;
         }
-        .libro-box {
+.libro-box {
     margin-top: 35px;
     background: white;
     border: 1px solid #ddd;
     border-radius: 22px;
     padding: 35px;
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    gap: 30px;
+    gap: 35px;
 }
 
-.libro-box h3 {
+.libro-img {
+    width: 220px;
+    max-width: 100%;
+    border-radius: 14px;
+    box-shadow: 0 12px 30px rgba(0,0,0,0.18);
+}
+
+.libro-info h3 {
     font-family: 'EB Garamond', serif;
-    font-size: 2rem;
-    margin-bottom: 12px;
+    font-size: 2.2rem;
+    margin-bottom: 14px;
     color: #111;
 }
 
-.libro-box p {
+.libro-info p {
     color: #555;
-    max-width: 600px;
+    max-width: 620px;
+    margin-bottom: 28px;
 }
 
 @media(max-width: 700px) {
     .libro-box {
         flex-direction: column;
-        align-items: flex-start;
+        text-align: center;
+    }
+
+    .libro-info .buttons {
+        justify-content: center;
     }
 }
         /* COMMUNITY */
@@ -569,6 +580,28 @@ footer {
             </div>
 
             <a href="#contacto" class="btn btn-primary">Consultar por el libro</a>
+        </div>
+    </div>
+    </section>
+    <section id="libro">
+    <div class="container">
+        <h2 class="section-title">Firme en la Tormenta</h2>
+
+        <div class="libro-box">
+            <img src="firme-en-la-tormenta.jpeg" alt="Portada del libro Firme en la Tormenta" class="libro-img">
+
+            <div class="libro-info">
+                <h3>Firme en la Tormenta</h3>
+                <p>
+                    Estoicismo práctico para resistir en el trabajo y en la vida.
+                    Un libro de Gabriel Ríos orientado a llevar la filosofía estoica
+                    a los desafíos cotidianos.
+                </p>
+
+                <div class="buttons">
+                    <a href="#contacto" class="btn btn-primary">Consultar por el libro</a>
+                </div>
+            </div>
         </div>
     </div>
     </section>
