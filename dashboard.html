@@ -169,7 +169,14 @@
                 
                 <label for="descripcion">Breve Descripción (Vista previa en tarjetas)</label>
                 <input type="text" id="descripcion" placeholder="Ej: Una reflexión introspectiva sobre el tiempo." required>
-                
+                <label for="imagenBitacora">Imagen de portada</label>
+
+<input type="file" id="imagenBitacora" accept="image/*">
+
+<img
+    id="previewImagenBitacora"
+    style="display:none; max-width:300px; margin-top:10px; border-radius:10px; border:1px solid #ddd;"
+>
                 <label for="contenido">Contenido Completo (Se leerá en el Modal)</label>
                 <textarea id="contenido" placeholder="Escribe aquí toda tu bitácora desarrollado..." required></textarea>
                 
